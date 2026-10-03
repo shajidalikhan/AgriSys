@@ -1,0 +1,203 @@
+Chapter 4
+Research Objectives
+This chapter defines the eight specific, measurable research objectives of the proposed system. Each objective is derived directly from a research gap identified in Chapter 3 and a research question from Chapter 1. The objectives are designed to be independently testable — each has a named target metric — yet collectively form an integrated system. Section 4.1 states the primary objective. Sections 4.2 through 4.9 detail each specific objective. Section 4.10 provides the complete gap-to-objective traceability matrix.
+
+4.1  Primary Objective
+Primary Objective
+To design, develop, and evaluate a deployment-ready multi-agent, multi-model agricultural expert system for Indian smallholder farmers that integrates five specialist AI agents — disease diagnosis, nutrition deficiency, crop recommendation, weather and irrigation, and live market price advisory — orchestrated by an intent-routing backbone, grounded in a verified RAG knowledge base, augmented with farmer-facing explainability, and accessible via a multilingual Indic voice interface on a Progressive Web Application.
+
+4.2  Specific Objectives
+O1  Multi-Agent Orchestration Architecture
+Description
+Design and implement a LangGraph-based orchestrator that classifies incoming farmer queries into one of eight intent categories and dispatches inputs in parallel to the appropriate specialist agent(s). The orchestrator maintains multi-turn conversational state via Redis session memory and merges multi-agent responses into a single coherent advisory reply.
+Gaps closed
+G1 — No unified multimodal advisory session
+Key technologies
+LangGraph v1.1 · GPT-5.5 backbone · fine-tuned BERT-multilingual intent classifier · Redis session store · asyncio parallel dispatch
+Target metrics
+Intent classification accuracy > 95% · End-to-end response latency < 4 s (cloud) and < 8 s (PWA offline cache)
+
+O2  Disease Diagnostic Agent
+Description
+Fine-tune ViT-L/16 with LoRA adaptation (rank-16, alpha-32) on a composite dataset of 164,500 leaf and pest images across PlantVillage, PlantDoc, and IP102. Integrate AgriChain Chain-of-Thought prompting for structured reasoning from visual input to treatment protocol. Generate Grad-CAM saliency maps for every diagnosis.
+Gaps closed
+G1 (image input modality) · G3 (Grad-CAM generated for rendering)
+Key technologies
+ViT-L/16 (ImageNet-21k) · LoRA rank-16 · LLMI-CDP dialogue style · AgriChain CoT · PlantVillage (87k) + PlantDoc (2.5k) + IP102 (75k)
+Target metrics
+Top-1 accuracy > 90% · F1 macro > 0.87 · Grad-CAM IoU vs. expert annotation > 0.75 · Covers 200+ diseases across 50+ crops
+
+O3  Nutrition Deficiency Agent with Cross-Modal Fusion
+Description
+Develop a cross-modal fusion network that concatenates ResNet-50 leaf image feature vectors (2048-dim) with normalised real-time soil sensor readings (NPK, pH, EC, moisture — 6-dim) into a joint 2054-dimensional representation. Three fully-connected layers produce: (1) deficiency class label (N/P/K/Fe/Zn/B deficiency or healthy), and (2) fertiliser dose recommendation in kg/ha aligned with ICAR Soil Health Card norms.
+Gaps closed
+G2 — No cross-modal sensor + image nutrition fusion in a conversational loop
+Key technologies
+ResNet-50 encoder · 6-dim sensor vector (MQTT/REST) · Cross-modal MLP · ICAR Soil Health Card DB · SHAP feature importance
+Target metrics
+Deficiency class F1 > 0.85 · Fertiliser dose RMSE < 5 kg/ha · SHAP stability score > 0.80 across repeated runs
+
+O4  Hallucination-Resistant RAG Knowledge Layer
+Description
+Build a 250,000+ document chunk RAG pipeline over verified ICAR Package of Practices (all major Indian crops), KCC call transcripts, CGIAR, FAO, Agmarknet historical data, and Soil Health Card norms. Implement hybrid BM25 + dense retrieval with E5-large-v2 embeddings, cross-encoder reranking, HyDE query expansion, and Qwen3-72B LLM-as-judge confidence gating. Escalate to KCC expert webhook if confidence score < 0.70.
+Gaps closed
+G1 (knowledge grounding across all five domains)
+Key technologies
+Qdrant vector store · E5-large-v2 embeddings · ms-marco cross-encoder · HyDE + MMR · Qwen3-72B judge · Bilingual Hindi+English index
+Target metrics
+RAGAS faithfulness > 0.88 · Context relevance > 0.85 · Hallucination rate < 5% · Expert escalation trigger accuracy > 90%
+
+O5  Farmer-Facing Explainable AI (XAI)
+Description
+Render Grad-CAM saliency heatmaps as colour overlays on the farmer's uploaded leaf image and SHAP feature importance bar charts for crop recommendations — directly within the React PWA advisory response as farmer-accessible UI components, with Hindi-labelled axes and simplified visual legends. This closes the gap between XAI as a research output and XAI as a farmer-facing trust mechanism.
+Gaps closed
+G3 — XAI never rendered to the farmer in any deployed system
+Key technologies
+Grad-CAM (layer4) · EigenCAM (validation) · SHAP TreeExplainer · Recharts (PWA bar charts) · Hindi axis labels via i18next
+Target metrics
+Grad-CAM IoU > 0.75 vs. ICAR agronomist annotation · SHAP stability > 0.80 · Farmer comprehension score > 3.5/5.0 (Likert, n=30 pilot)
+
+O6  End-to-End Indic Voice Advisory Pipeline
+Description
+Implement a complete voice advisory pipeline: Whisper large-v3 (fine-tuned on Indic agricultural speech from the 10,934-recording benchmark corpus) for ASR → multilingual RAG retrieval over Hindi+English bilingual knowledge index → Bhashini TTS for spoken response delivery in 10 Indic languages. The pipeline must operate within a 4-second end-to-end latency budget on 3G connectivity.
+Gaps closed
+G4 — No end-to-end Indic voice-to-advisory pipeline exists in any agricultural system
+Key technologies
+Whisper large-v3 (Indic fine-tuned) · Bhashini ASR + TTS API · IndicBERT NER · MediaRecorder (PWA browser) · 16 kHz mono WAV preprocessing
+Target metrics
+WER < 20% for Hindi agricultural speech · WER < 30% for five regional languages (Tamil, Telugu, Marathi, Kannada, Odia) · End-to-end latency < 4 s
+
+O7  Live Market Price Advisory Agent
+Description
+Integrate Agmarknet and eNAM live mandi price feeds (15-minute refresh, Redis cache) with a Prophet-based 7-day price forecast model. Rank nearby mandis by Haversine distance and price differential. Co-deliver sell, hold, or transport-to-mandi advisory within the same conversational session as agronomic advice — enabling compound queries such as 'my crop has blight; should I treat or sell now?'
+Gaps closed
+G5 — Live market price never co-delivered with agronomic advice in any prior system
+Key technologies
+Agmarknet API · eNAM data feed · Prophet time-series forecast · CACP MSP dataset 2024–25 · Haversine mandi ranking · Redis 15-min TTL cache
+Target metrics
+7-day price forecast MAPE < 8% · Mandi ranking accuracy > 85% vs. actual best-price mandi · Sell/hold advisory agronomist agreement > 75%
+
+O8  System Evaluation and Expert Validation
+Description
+Benchmark the complete integrated system on MIRAGE (multi-turn agricultural dialogue benchmark) and AgMMU (agricultural multimodal understanding benchmark). Validate advisory quality via a blind evaluation panel of ten ICAR-certified agronomists rating 200 real farmer queries across five crop categories on a 5-point Likert scale for correctness, clarity, safety, and actionability.
+Gaps closed
+Validates that all five gaps are closed — quantitative evidence for each claim
+Key technologies
+MIRAGE benchmark · AgMMU benchmark · RAGAS eval suite · ICAR agronomist panel (n=10) · Langfuse tracing · Ablation study framework
+Target metrics
+Agronomist correctness Likert > 4.0/5.0 · Agronomist agreement > 80% · MIRAGE score > baseline by 15% · Ablation: 5-agent vs. single-agent · RAG vs. no-RAG
+
+4.3  Objectives Summary and Traceability Matrix
+Table 4.1 provides the complete traceability matrix mapping each research objective to its parent research question (Chapter 1), the research gap it closes (Chapter 3), the primary technologies required, and the quantitative target metric for evaluation.
+
+Table 4.1: Research objectives — full traceability matrix
+Obj.
+RQ
+Gap
+Description
+Technology
+Target metric
+O1
+RQ1
+G1
+Multi-agent orchestrator — intent routing to 5 specialist agents with Redis memory
+LangGraph v1.1 · BERT intent classifier · GPT-5.5
+Intent accuracy > 95% · Latency < 4 s
+O2
+RQ1
+G1
+Disease agent — ViT-L/16 + LoRA on 164k images with CoT reasoning and Grad-CAM
+ViT-L/16 · LoRA rank-16 · AgriChain CoT · PlantVillage+PlantDoc+IP102
+Top-1 acc > 90% · F1 > 0.87 · Grad-CAM IoU > 0.75
+O3
+RQ2
+G2
+Nutrition agent — cross-modal fusion of ResNet-50 leaf features + soil NPK/pH/EC
+ResNet-50 + 6-dim sensor MLP · ICAR SHC norms · SHAP
+Deficiency F1 > 0.85 · Dose RMSE < 5 kg/ha
+O4
+RQ1
+G1
+RAG pipeline — 250k+ ICAR/FAO chunks, hybrid retrieval, LLM-as-judge gating
+Qdrant · E5-large-v2 · Cross-encoder · HyDE · Qwen3
+Faithfulness > 0.88 · Hallucination < 5%
+O5
+RQ3
+G3
+Farmer XAI — Grad-CAM overlay + SHAP charts rendered in React PWA advisory UI
+Grad-CAM · SHAP TreeExplainer · Recharts · i18next Hindi
+IoU > 0.75 · Farmer comprehension > 3.5/5.0
+O6
+RQ4
+G4
+Indic voice pipeline — Whisper ASR + bilingual RAG + Bhashini TTS end-to-end
+Whisper large-v3 Indic · Bhashini API · IndicBERT
+WER < 20% Hindi · < 30% regional · < 4 s E2E
+O7
+RQ5
+G5
+Market agent — Agmarknet/eNAM live feed + Prophet forecast co-delivered with agronomy
+Agmarknet + eNAM API · Prophet · MSP DB · Redis TTL
+Price MAPE < 8% · Agronomist agreement > 75%
+O8
+All
+All
+System evaluation — MIRAGE, AgMMU, ICAR agronomist panel (n=10, 200 queries)
+RAGAS · MIRAGE · AgMMU · Langfuse · Ablation
+Likert > 4.0/5.0 · Agronomist agreement > 80%
+Table 4.1: Full traceability matrix — each objective traced to research question, gap closed, technology stack, and quantitative evaluation target.
+
+4.4  Objective–Gap–Contribution Relationship
+Table 4.2 summarises the direct relationship between each gap identified in Chapter 3, the objective that closes it, and the novel contribution it produces — confirming that every gap has exactly one closing objective and every objective produces a clearly stated novel contribution.
+
+Table 4.2: Gap-to-objective-to-contribution mapping
+Gap
+Gap statement (brief)
+Obj.
+Novel contribution produced
+G1
+No unified multimodal advisory session across all five domains
+O1
+First deployment-ready multi-agent system routing to five specialist models in one session — novel over Farmer.Chat, AgriDoctor, AgroAskAI (all single-model or single-domain)
+G2
+No cross-modal sensor+image nutrition fusion in a dialogue
+O3
+First cross-modal fusion network combining leaf image features + soil sensor data for nutrition deficiency advisory inside a conversational loop — novel over all surveyed nutrition and VLM papers
+G3
+XAI never rendered to farmer in any deployed system
+O5
+First system rendering Grad-CAM heatmaps and SHAP charts to farmers as a UI component of the advisory response — novel over XAI-CROP (Springer), LLMI-CDP, Agentic XAI (all researcher-facing only)
+G4
+No end-to-end Indic voice-to-advisory pipeline
+O6
+First end-to-end pipeline: Whisper ASR → multilingual RAG → Bhashini TTS for agricultural advisory — novel over Farmer.Chat (partial ASR only) and all other systems (no voice)
+G5
+Market price never co-delivered with agronomic advice
+O7
+First system delivering live mandi price forecast and sell/hold advisory within the same session as disease and nutrition advice — novel over all 25+ surveyed papers (none attempt this)
+Table 4.2: Direct gap-to-objective-to-contribution traceability. Every identified gap is closed by exactly one objective; every objective produces a clearly novel contribution over the surveyed literature.
+
+References
+References cited in Chapter 4. Full details in consolidated thesis reference list.
+
+[1]  AgriDoctor: A Modular Multimodal Framework for Crop Disease Diagnosis. IEEE / arXiv:2509.17044, 2025.
+[2]  AgriGPT: A Large Language Model Ecosystem for Agriculture with Tri-RAG. arXiv:2508.08632, 2025.
+[3]  AgriM-LLM: An Agriculture-Specific Multimodal LLM for Crop Disease and Pest Management. Preprints.org, 2026.
+[4]  Farmer.Chat: Scaling AI-Powered Agricultural Services for Smallholder Farmers. ACM, 2024. arXiv:2409.08916.
+[5]  AgriChain: Visually-Grounded Expert-Verified Reasoning for Agricultural VLMs. arXiv, 2025.
+[6]  LLMI-CDP: A Large Language Model for Multimodal Identification of Crop Diseases and Pests. Scientific Reports, 2025.
+[7]  Enhancing Crop Recommendation with Explainable AI (XAI-CROP). Neural Computing and Applications, Springer, 2024.
+[8]  Benchmarking ASR for Indian Languages in Agricultural Contexts. arXiv, 2025.
+[9]  MeitY / Bhashini. Digital Language Inclusion Platform. Government of India, 2024.
+[10]  RAG-Based LLM Advisory Framework for Farmers. Journal of Agricultural Engineering, 2026.
+[11]  MIRAGE: Benchmark for Multimodal Information-Seeking in Agricultural Expert-Guided Conversations. arXiv, 2025.
+[12]  AgMMU: Agricultural Multimodal Understanding and Reasoning Benchmark. arXiv, April 2025.
+[13]  RAGAS: Automated Evaluation of Retrieval-Augmented Generation. arXiv:2309.15217, 2023.
+[14]  Hu, E. et al. LoRA: Low-Rank Adaptation of Large Language Models. ICLR, 2022. arXiv:2106.09685.
+[15]  Dosovitskiy, A. et al. An Image is Worth 16×16 Words: Transformers for Image Recognition at Scale. ICLR, 2021.
+[16]  Selvaraju, R.R. et al. Grad-CAM: Visual Explanations from Deep Networks. ICCV, 2017.
+[17]  Lundberg, S.M. and Lee, S.I. A Unified Approach to Interpreting Model Predictions (SHAP). NeurIPS, 2017.
+[18]  Radford, A. et al. Robust Speech Recognition via Large-Scale Weak Supervision (Whisper). ICML, 2023.
+[19]  LangChain. State of AI Agents Report 2025. LangChain Inc., 2025.
+[20]  eNAM Annual Report 2022–23. National Agriculture Market, Ministry of Agriculture, Government of India, 2023.
+[21]  ICAR Package of Practices for Major Indian Crops. Indian Council of Agricultural Research, 2023.

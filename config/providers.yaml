@@ -1,0 +1,34 @@
+# config/providers.yaml — Central Provider Configuration
+# Edit this file to switch LLM, embedding, or vision models without changing code.
+
+llm:
+  provider: "gemini"                  # gemini | openai | groq | openrouter | ollama
+  model: "gemini-3.8-flash"
+  api_key: "${GEMINI_API_KEY}"        # read from .env
+  temperature: 0.1
+  max_tokens: 2048
+
+embedding:
+  provider: "local"                   # local | huggingface_local | openai | ollama | gemini
+  model: "intfloat/multilingual-e5-large"
+  dimension: 1024
+
+vision:                               # for orchestrator-level image description
+  provider: "gemini"                  # gemini | openai | ollama
+  model: "gemini-3.8-flash"
+  api_key: "${GEMINI_API_KEY}"
+
+hallucination_guard:
+  provider: "groq"                    # fast, cheap LLM as judge (groq | gemini | openai)
+  model: "llama-3.3-70b-versatile"
+
+openrouter:                           # used when provider: openrouter
+  api_key: "${OPENROUTER_API_KEY}"
+  default_model: "anthropic/claude-3.5-sonnet"
+  fallback_model: "meta-llama/llama-3.3-70b-instruct"
+
+web_search:
+  provider: "duckduckgo"               # duckduckgo | tavily
+  api_key: "${TAVILY_API_KEY}"        # optional for tavily
+  max_results: 5
+  timeout_seconds: 10

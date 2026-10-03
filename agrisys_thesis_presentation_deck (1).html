@@ -1,0 +1,472 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.deck{font-family:var(--font-sans)}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 14px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:16px}
+.nav-pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill-btn{font-size:11px;padding:3px 9px;border-radius:99px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.pill-btn.active{background:#534AB7;border-color:#534AB7;color:#CECBF6}
+.nav-arrows{display:flex;gap:6px}
+.arr-btn{font-size:13px;padding:4px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+.arr-btn:disabled{opacity:.3;cursor:default}
+.slide{display:none;min-height:480px;padding:28px 32px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);position:relative}
+.slide.active{display:block}
+.slide-num{font-size:11px;color:var(--color-text-tertiary);position:absolute;top:16px;right:20px}
+.slide-tag{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:99px;margin-bottom:14px}
+.tag-intro{background:#EEEDFE;color:#3C3489}
+.tag-lit{background:#E1F5EE;color:#085041}
+.tag-gap{background:#FAECE7;color:#712B13}
+.tag-prob{background:#FCEBEB;color:#791F1F}
+.tag-obj{background:#EAF3DE;color:#27500A}
+.tag-app{background:#FAEEDA;color:#633806}
+.tag-sys{background:#E6F1FB;color:#0C447C}
+.tag-eval{background:#F1EFE8;color:#444441}
+.tag-conc{background:#EEEDFE;color:#3C3489}
+@media(prefers-color-scheme:dark){
+.tag-intro{background:#3C3489;color:#CECBF6}
+.tag-lit{background:#085041;color:#9FE1CB}
+.tag-gap{background:#712B13;color:#F5C4B3}
+.tag-prob{background:#791F1F;color:#F7C1C1}
+.tag-obj{background:#27500A;color:#C0DD97}
+.tag-app{background:#633806;color:#FAC775}
+.tag-sys{background:#0C447C;color:#B5D4F4}
+.tag-eval{background:#444441;color:#D3D1C7}
+.tag-conc{background:#3C3489;color:#CECBF6}
+}
+.slide-title{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px;line-height:1.3}
+.slide-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:22px}
+.bullet-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.bullet-list li{font-size:14px;color:var(--color-text-primary);display:flex;gap:10px;line-height:1.5}
+.bullet-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:#534AB7;flex-shrink:0;margin-top:7px}
+.bullet-list li span{color:var(--color-text-secondary);font-size:13px}
+.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px 16px;text-align:center}
+.stat-num{font-size:24px;font-weight:500;color:var(--color-text-primary)}
+.stat-label{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px}
+.col-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px}
+.col-card-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block}
+.dp{background:#534AB7}.dt{background:#0F6E56}.dc{background:#993C1D}.da{background:#854F0B}.dg{background:#3B6D11}.db{background:#185FA5}.dr{background:#A32D2D}
+.col-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.col-list li{font-size:12px;color:var(--color-text-secondary);display:flex;gap:7px;line-height:1.5}
+.col-list li::before{content:"→";color:var(--color-text-tertiary);flex-shrink:0}
+.gap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:4px}
+.gap-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px}
+.gap-num{font-size:11px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:4px}
+.gap-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:5px}
+.gap-body{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+.ps-box{border-left:3px solid #534AB7;padding:14px 18px;background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;margin:14px 0;font-size:14px;color:var(--color-text-primary);line-height:1.6;border-top-left-radius:0;border-bottom-left-radius:0}
+.obj-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px}
+.obj-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px}
+.obj-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-tertiary);margin-bottom:5px}
+.obj-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.obj-body{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.agent-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:14px 0}
+.agent-card{border-radius:var(--border-radius-md);padding:10px 8px;text-align:center}
+.agent-name{font-size:11px;font-weight:500;margin-bottom:3px}
+.agent-detail{font-size:10px;line-height:1.4}
+.ac-p{background:#EEEDFE;color:#3C3489}.ac-t{background:#E1F5EE;color:#085041}.ac-c{background:#FAECE7;color:#712B13}.ac-a{background:#FAEEDA;color:#633806}.ac-g{background:#EAF3DE;color:#27500A}
+@media(prefers-color-scheme:dark){
+.ac-p{background:#3C3489;color:#CECBF6}.ac-t{background:#085041;color:#9FE1CB}.ac-c{background:#712B13;color:#F5C4B3}.ac-a{background:#633806;color:#FAC775}.ac-g{background:#27500A;color:#C0DD97}
+}
+.layer-stack{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.layer-row{border-radius:var(--border-radius-md);padding:9px 14px;display:flex;align-items:center;gap:10px}
+.lr-p{background:#EEEDFE}.lr-t{background:#E1F5EE}.lr-c{background:#FAECE7}.lr-a{background:#FAEEDA}.lr-g{background:#EAF3DE}.lr-b{background:#E6F1FB}.lr-gr{background:#F1EFE8}
+@media(prefers-color-scheme:dark){
+.lr-p{background:#3C3489}.lr-t{background:#085041}.lr-c{background:#712B13}.lr-a{background:#633806}.lr-g{background:#27500A}.lr-b{background:#0C447C}.lr-gr{background:#444441}
+}
+.lr-label{font-size:11px;font-weight:500;min-width:90px;color:var(--color-text-secondary)}
+.lr-val{font-size:12px;color:var(--color-text-primary);line-height:1.4}
+.contrib-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.contrib-item{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+.contrib-n{font-size:18px;font-weight:500;color:#534AB7;min-width:24px}
+.contrib-body{font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.contrib-body small{display:block;font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.eval-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.eval-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.eval-title{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.eval-metric{font-size:11px;color:var(--color-text-secondary);margin-bottom:2px}
+.ref-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.ref-item{font-size:12px;color:var(--color-text-secondary);line-height:1.5;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)}
+.ref-item strong{color:var(--color-text-primary);font-weight:500}
+</style>
+
+<div class="deck">
+<div class="nav-bar">
+  <div class="nav-pills" id="pills"></div>
+  <div class="nav-arrows">
+    <button class="arr-btn" id="prev" onclick="go(-1)" disabled>&#8592;</button>
+    <span id="slide-counter" style="font-size:12px;color:var(--color-text-secondary);padding:0 4px;align-self:center"></span>
+    <button class="arr-btn" id="next" onclick="go(1)">&#8594;</button>
+  </div>
+</div>
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide active" id="s0">
+  <span class="slide-num">1 / 9</span>
+  <span class="slide-tag tag-intro">thesis presentation</span>
+  <div class="slide-title" style="font-size:26px;margin-bottom:10px">Towards a next-generation agricultural expert system</div>
+  <div style="font-size:16px;color:var(--color-text-secondary);margin-bottom:28px">A multimodal conversational approach</div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:28px">
+    <div style="font-size:13px;color:var(--color-text-secondary)">Research domain — Artificial Intelligence · Precision Agriculture · NLP</div>
+    <div style="font-size:13px;color:var(--color-text-secondary)">Target — Multi-crop, India-focused · Web platform deployment</div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num">146M+</div><div class="stat-label">smallholder farm households in India</div></div>
+    <div class="stat-card"><div class="stat-num">₹1.5L cr</div><div class="stat-label">annual crop loss from diseases & poor advisory</div></div>
+    <div class="stat-card"><div class="stat-num">&lt;30%</div><div class="stat-label">farmers with access to agronomist advice</div></div>
+  </div>
+  <div style="margin-top:16px;font-size:13px;color:var(--color-text-tertiary)">Supervised by: [Supervisor Name] &nbsp;|&nbsp; Department of Computer Science &nbsp;|&nbsp; [Institution] &nbsp;|&nbsp; 2024–25</div>
+</div>
+
+<!-- SLIDE 2: INTRODUCTION -->
+<div class="slide" id="s1">
+  <span class="slide-num">2 / 9</span>
+  <span class="slide-tag tag-intro">introduction</span>
+  <div class="slide-title">The agricultural advisory crisis in India</div>
+  <div class="slide-sub">Why existing systems fail the 146 million farmers who need them most</div>
+  <div class="two-col">
+    <div>
+      <ul class="bullet-list">
+        <li>India has 1 agricultural extension worker per 1,000+ farmers — advice is inaccessible at scale <span>(ICAR, 2023)</span></li>
+        <li>Crop disease is the leading cause of yield loss, yet most farmers diagnose by eye, often too late <span>(FAO, 2022)</span></li>
+        <li>Soil nutrient deficiencies cost an estimated 20–30% of potential yield annually, yet soil testing adoption remains below 15% <span>(NABARD, 2023)</span></li>
+        <li>Mandi price information asymmetry causes farmers to sell at 30–40% below optimal price <span>(eNAM report, 2023)</span></li>
+        <li>Existing AI tools are English-only, text-only, or require smartphones with stable internet — excluding the majority of target users</li>
+      </ul>
+    </div>
+    <div>
+      <div class="col-card">
+        <div class="col-card-title"><span class="dot dp"></span>What AI can offer</div>
+        <ul class="col-list">
+          <li>24/7 voice-accessible advisory in Hindi and regional languages</li>
+          <li>Instant leaf image disease diagnosis with explainability</li>
+          <li>Soil-sensor-grounded nutrition recommendations</li>
+          <li>Live mandi price integration with sell/hold guidance</li>
+          <li>Crop recommendations tailored to local soil and climate</li>
+          <li>Multimodal input — text, voice, image, sensor data</li>
+        </ul>
+      </div>
+      <div class="col-card" style="margin-top:10px">
+        <div class="col-card-title"><span class="dot dt"></span>Why now?</div>
+        <ul class="col-list">
+          <li>LLMs (GPT-4o, Gemini) now strong enough for domain advisory</li>
+          <li>VLMs (ViT, LLaVA) achieve >90% accuracy on PlantVillage</li>
+          <li>Bhashini API enables 10+ Indic language ASR and TTS</li>
+          <li>RAG removes hallucination barriers for knowledge grounding</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: RELATED WORK -->
+<div class="slide" id="s2">
+  <span class="slide-num">3 / 9</span>
+  <span class="slide-tag tag-lit">related work</span>
+  <div class="slide-title">Landscape of prior research</div>
+  <div class="slide-sub">Six streams of work this thesis builds upon and extends</div>
+  <div class="gap-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+    <div class="gap-card">
+      <div class="gap-num">stream 1</div>
+      <div class="gap-title">Multimodal conversational AI in agriculture</div>
+      <div class="gap-body">MIRAGE (2025) · AgMMU benchmark · Farmer.Chat (ACM 2024) — establish benchmarks and deployed systems but lack unified disease + market advisory in one session</div>
+    </div>
+    <div class="gap-card">
+      <div class="gap-num">stream 2</div>
+      <div class="gap-title">LLMs and RAG for farm advisory</div>
+      <div class="gap-body">AgroLLM · AgriLLM · IJASEIT RAG eval · J. Agri. Engineering (2026) — text-only RAG pipelines with strong accuracy but no image or voice modality</div>
+    </div>
+    <div class="gap-card">
+      <div class="gap-num">stream 3</div>
+      <div class="gap-title">Vision-language models for plant disease</div>
+      <div class="gap-body">LLMI-CDP (Sci. Reports 2025) · AgriChain · Self-consistency VLMs — achieve 91–94% accuracy on leaf diagnosis but no farmer-facing conversational interface</div>
+    </div>
+    <div class="gap-card">
+      <div class="gap-num">stream 4</div>
+      <div class="gap-title">Explainable AI in agriculture</div>
+      <div class="gap-body">XAI-CROP (Springer NCA 2024) · Grad-CAM for plant disease · SHAP for crop rec — XAI exists in isolation per task but is never surfaced to farmers conversationally</div>
+    </div>
+    <div class="gap-card">
+      <div class="gap-num">stream 5</div>
+      <div class="gap-title">Speech and multilingual NLP</div>
+      <div class="gap-body">Indic ASR benchmark (arXiv 2025) · IndicBERT · Bhashini — voice interfaces exist but are not connected to agronomic advisory systems end-to-end</div>
+    </div>
+    <div class="gap-card">
+      <div class="gap-num">stream 6</div>
+      <div class="gap-title">Agentic and expert systems</div>
+      <div class="gap-body">CropiBot (Sci. Reports 2026) · Transformer survey (EAAI 2024) — single-agent advisory chatbots lack specialist model routing and cross-modal sensor fusion</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: RESEARCH GAP -->
+<div class="slide" id="s3">
+  <span class="slide-num">4 / 9</span>
+  <span class="slide-tag tag-gap">research gap</span>
+  <div class="slide-title">What no existing system has built</div>
+  <div class="slide-sub">Five specific gaps identified across the literature survey</div>
+  <div class="contrib-list">
+    <div class="contrib-item">
+      <div class="contrib-n">G1</div>
+      <div class="contrib-body">No system unifies disease diagnosis (image), nutrition advisory (sensor), crop recommendation, weather, and live market data in a single conversational session
+        <small>Farmer.Chat handles text + KB only · LLMI-CDP handles image only · AgroLLM handles text RAG only</small>
+      </div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n">G2</div>
+      <div class="contrib-body">Cross-modal fusion of leaf image and soil sensor data for nutrition deficiency has not been deployed in a conversational advisory context
+        <small>Sensor fusion papers (PMC 2025) work offline — no dialogue interface wraps them</small>
+      </div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n">G3</div>
+      <div class="contrib-body">Explainability (Grad-CAM heatmaps, SHAP bars) is generated internally in research papers but never rendered to the farmer in a UI
+        <small>XAI-CROP produces SHAP values as research output — not as a farmer-facing advisory response</small>
+      </div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n">G4</div>
+      <div class="contrib-body">No end-to-end voice-to-advisory pipeline exists for Hindi and Indic languages: ASR → multilingual NLP → agronomic RAG → TTS response
+        <small>Indic ASR benchmark (2025) reports WER as low as 16% but no system connects it to an advisory backend</small>
+      </div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n">G5</div>
+      <div class="contrib-body">Live mandi price data has never been integrated into the same conversational turn as a crop disease or agronomic advisory response
+        <small>Market agents and agronomic agents exist in separate silos across all surveyed literature</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: PROBLEM STATEMENT -->
+<div class="slide" id="s4">
+  <span class="slide-num">5 / 9</span>
+  <span class="slide-tag tag-prob">problem statement</span>
+  <div class="slide-title">Formal problem statement</div>
+  <div class="ps-box">
+    Indian smallholder farmers face simultaneous, interdependent challenges — crop disease, soil nutrient deficiency, uncertain crop selection, irrigation scheduling, and price realisation — that cannot be addressed by any single AI model or modality. Existing expert systems are text-only, single-agent, single-language, and non-explainable, making them inaccessible and untrustworthy for the target population. No current system accepts voice queries in Hindi, diagnoses disease from leaf images, integrates real-time soil sensor data, and advises on live mandi prices within a single conversational turn, with explanations grounded in verified knowledge sources.
+  </div>
+  <div class="two-col" style="margin-top:8px">
+    <div class="col-card">
+      <div class="col-card-title"><span class="dot dc"></span>Challenges to overcome</div>
+      <ul class="col-list">
+        <li>Modality heterogeneity — voice, image, text, sensor, price are structurally different inputs</li>
+        <li>Domain knowledge depth — agriculture requires expert-level, crop-specific, region-specific knowledge</li>
+        <li>Hallucination risk — LLMs fabricate crop-care advice with dangerous confidence</li>
+        <li>Language barrier — Hindi and Indic ASR accuracy still sub-optimal for agricultural vocabulary</li>
+        <li>Trust — farmers reject advice they cannot understand or verify</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <div class="col-card-title"><span class="dot dg"></span>Constraints of the solution</div>
+      <ul class="col-list">
+        <li>Must work on commodity Android device + 3G connection</li>
+        <li>Response time &lt; 4 seconds for cloud, &lt; 8s for offline-cached PWA</li>
+        <li>Knowledge grounded exclusively in ICAR, FAO, CGIAR verified sources</li>
+        <li>Explainability must be farmer-readable — visual heatmaps, not numerical scores</li>
+        <li>Multi-crop: must cover wheat, rice, maize, cotton, tomato, potato and more</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: OBJECTIVES -->
+<div class="slide" id="s5">
+  <span class="slide-num">6 / 9</span>
+  <span class="slide-tag tag-obj">objectives</span>
+  <div class="slide-title">Research objectives</div>
+  <div class="slide-sub">Eight measurable objectives that together close the five identified research gaps</div>
+  <div class="obj-grid">
+    <div class="obj-card">
+      <div class="obj-label">O1 · architecture</div>
+      <div class="obj-title">Design a multi-agent orchestration system</div>
+      <div class="obj-body">Build a LangGraph-based orchestrator that classifies intent and routes queries to the correct specialist agent(s) in parallel, with multi-turn memory.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-label">O2 · disease</div>
+      <div class="obj-title">Train and deploy a disease diagnostic agent</div>
+      <div class="obj-body">Fine-tune ViT-L/16 with LoRA on PlantVillage + PlantDoc + IP102, integrate AgriChain CoT, achieve &gt;90% top-1 accuracy across 50+ crops, 200+ diseases.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-label">O3 · nutrition</div>
+      <div class="obj-title">Develop cross-modal nutrition deficiency agent</div>
+      <div class="obj-body">Fuse leaf image features (ResNet-50) with soil sensor readings (NPK, pH, EC) via a cross-modal MLP to generate fertiliser dose recommendations.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-label">O4 · RAG</div>
+      <div class="obj-title">Build a hallucination-resistant RAG knowledge layer</div>
+      <div class="obj-body">Ingest 250k+ ICAR/FAO/CGIAR document chunks into Qdrant with hybrid BM25+dense retrieval, cross-encoder reranking, and LLM-as-judge confidence gating.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-label">O5 · XAI</div>
+      <div class="obj-title">Surface explainability to the farmer UI</div>
+      <div class="obj-body">Render Grad-CAM heatmaps on disease images and SHAP bar charts for crop recommendations directly in the React PWA — not as research output but as user-facing UI.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-label">O6 · voice</div>
+      <div class="obj-title">Implement end-to-end Indic voice pipeline</div>
+      <div class="obj-body">Integrate Whisper large-v3 (fine-tuned Indic) for ASR and Bhashini TTS for response delivery, targeting WER &lt;20% for Hindi and &lt;30% for 5 regional languages.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-label">O7 · market</div>
+      <div class="obj-title">Integrate live mandi price advisory</div>
+      <div class="obj-body">Pull Agmarknet + eNAM price data at 15-min intervals, run Prophet 7-day forecast, and deliver sell/hold/transport advisory in the same session as agronomic advice.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-label">O8 · evaluation</div>
+      <div class="obj-title">Evaluate on MIRAGE, AgMMU, and expert panel</div>
+      <div class="obj-body">Benchmark the system on established agricultural AI benchmarks and validate advisory quality with a panel of ICAR-certified agronomists across 5 crop categories.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: APPROACH -->
+<div class="slide" id="s6">
+  <span class="slide-num">7 / 9</span>
+  <span class="slide-tag tag-app">approach</span>
+  <div class="slide-title">System approach — six-layer architecture</div>
+  <div class="slide-sub">Each layer directly addresses one or more research objectives and gaps</div>
+  <div class="layer-stack">
+    <div class="layer-row lr-t"><span class="lr-label">L1 · Input layer</span><span class="lr-val">Five modalities — text chat, Whisper ASR voice, leaf/field images, MQTT soil sensors, Agmarknet live price feed · 10 Indic languages via Bhashini</span></div>
+    <div class="layer-row lr-p"><span class="lr-label">L2 · Preprocessing</span><span class="lr-val">Parallel preprocessing — ASR transcription, Hindi normalisation, image QA (BRISQUE), sensor calibration, price anomaly filter</span></div>
+    <div class="layer-row lr-p"><span class="lr-label">L3 · Orchestrator</span><span class="lr-val">GPT-4o + fine-tuned BERT intent classifier · LangGraph multi-agent dispatch · Redis session memory · parallel agent calls · confidence-gated response merge</span></div>
+    <div class="layer-row lr-c" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <span class="lr-label" style="color:var(--color-text-secondary)">L4 · Specialist agents</span>
+      <div class="agent-row" style="margin:0;width:100%">
+        <div class="agent-card ac-c"><div class="agent-name">Disease</div><div class="agent-detail">ViT-L + LoRA · LLMI-CDP · AgriChain CoT · Grad-CAM</div></div>
+        <div class="agent-card ac-a"><div class="agent-name">Nutrition</div><div class="agent-detail">ResNet-50 + sensor MLP · cross-modal fusion · SHAP</div></div>
+        <div class="agent-card ac-g"><div class="agent-name">Crop rec</div><div class="agent-detail">XGBoost ensemble · SHAP XAI · ICAR sowing calendar</div></div>
+        <div class="agent-card ac-p"><div class="agent-name">Weather</div><div class="agent-detail">LSTM 7-day · IMD · Penman-Monteith ET · alerts</div></div>
+        <div class="agent-card ac-t"><div class="agent-name">Market</div><div class="agent-detail">Agmarknet · Prophet · MSP compare · sell/hold</div></div>
+      </div>
+    </div>
+    <div class="layer-row lr-p"><span class="lr-label">L5 · Knowledge + RAG</span><span class="lr-val">E5-large multilingual embeddings · Qdrant · hybrid BM25+dense · cross-encoder rerank · HyDE · Qwen3 LLM-as-judge · 250k+ ICAR/FAO chunks</span></div>
+    <div class="layer-row lr-b"><span class="lr-label">L6 · Output + XAI</span><span class="lr-val">React 18 PWA · Grad-CAM overlay on image · SHAP bar charts · Bhashini TTS Hindi response · district map · price trend chart · FastAPI/WebSocket backend</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 8: EVALUATION FRAMEWORK -->
+<div class="slide" id="s7">
+  <span class="slide-num">8 / 9</span>
+  <span class="slide-tag tag-eval">evaluation</span>
+  <div class="slide-title">Evaluation framework</div>
+  <div class="slide-sub">How each objective will be quantitatively measured before claiming contribution</div>
+  <div class="eval-grid">
+    <div class="eval-card">
+      <div class="eval-title">Disease diagnostic (O2)</div>
+      <div class="eval-metric">Dataset: PlantVillage test split + PlantDoc</div>
+      <div class="eval-metric">Metric: Top-1 acc · F1 macro · AUC-ROC</div>
+      <div class="eval-metric">Target: &gt;90% top-1 across 200+ diseases</div>
+      <div class="eval-metric">XAI: Grad-CAM IoU vs expert annotation</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-title">Nutrition agent (O3)</div>
+      <div class="eval-metric">Dataset: ICAR soil health card DB + synthetic sensor</div>
+      <div class="eval-metric">Metric: RMSE on fertiliser dose · F1 deficiency class</div>
+      <div class="eval-metric">Target: RMSE &lt;5 kg/ha · F1 &gt;0.85</div>
+      <div class="eval-metric">XAI: SHAP stability score across runs</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-title">Crop recommendation (O4)</div>
+      <div class="eval-metric">Dataset: ICRISAT district yield + IMD climate</div>
+      <div class="eval-metric">Metric: Top-3 acc · agronomist agreement %</div>
+      <div class="eval-metric">Target: Top-3 acc &gt;85% · agreement &gt;80%</div>
+      <div class="eval-metric">XAI: SHAP feature rank correlation</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-title">RAG quality (O4)</div>
+      <div class="eval-metric">Framework: RAGAS evaluation suite</div>
+      <div class="eval-metric">Metric: Faithfulness · context relevance · answer rel.</div>
+      <div class="eval-metric">Target: Faithfulness &gt;0.88 · hallucination rate &lt;5%</div>
+      <div class="eval-metric">Benchmark: MIRAGE · AgMMU eval sets</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-title">ASR / voice pipeline (O6)</div>
+      <div class="eval-metric">Dataset: Indic ASR benchmark (10,934 recordings)</div>
+      <div class="eval-metric">Metric: WER per language</div>
+      <div class="eval-metric">Target: WER &lt;20% Hindi · &lt;30% Indic</div>
+      <div class="eval-metric">End-to-end: voice → response latency &lt;4s</div>
+    </div>
+    <div class="eval-card">
+      <div class="eval-title">Expert agronomist panel (O8)</div>
+      <div class="eval-metric">Panel: 10 ICAR-certified agronomists</div>
+      <div class="eval-metric">Metric: 5-point Likert correctness + clarity</div>
+      <div class="eval-metric">Target: Mean correctness &gt;4.0 / 5.0</div>
+      <div class="eval-metric">Blind evaluation: 200 real farmer queries</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:12px;color:var(--color-text-secondary)">Ablation studies: system with all 5 agents vs. single-agent baseline · RAG vs. no-RAG · XAI rendered vs. not · voice vs. text-only</div>
+</div>
+
+<!-- SLIDE 9: CONTRIBUTIONS + CONCLUSION -->
+<div class="slide" id="s8">
+  <span class="slide-num">9 / 9</span>
+  <span class="slide-tag tag-conc">contributions &amp; roadmap</span>
+  <div class="slide-title">Research contributions and timeline</div>
+  <div class="slide-sub">Five novel contributions over prior art, and the 12-month delivery plan</div>
+  <div class="contrib-list" style="gap:6px">
+    <div class="contrib-item">
+      <div class="contrib-n" style="color:#534AB7">C1</div>
+      <div class="contrib-body">First multi-agent agricultural expert system routing queries to five specialist models — each a state-of-the-art domain model, not a generic LLM
+        <small>Closes G1 · addresses O1 · novel over: Farmer.Chat, AgroLLM, CropiBot (all single-model)</small></div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n" style="color:#534AB7">C2</div>
+      <div class="contrib-body">Cross-modal fusion of leaf image and soil sensor data for nutrition deficiency diagnosis in a conversational loop
+        <small>Closes G2 · addresses O3 · novel over: all surveyed nutrition papers (offline inference only)</small></div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n" style="color:#534AB7">C3</div>
+      <div class="contrib-body">Farmer-facing XAI: Grad-CAM heatmaps and SHAP bars surfaced in the web UI as part of the advisory response, not as research output
+        <small>Closes G3 · addresses O5 · novel over: XAI-CROP (Springer), LLMI-CDP — both log XAI internally</small></div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n" style="color:#534AB7">C4</div>
+      <div class="contrib-body">End-to-end Indic voice pipeline: Whisper ASR → Hindi NLP → RAG advisory → Bhashini TTS, deployed within the same web session
+        <small>Closes G4 · addresses O6 · novel over: Indic ASR benchmark paper (no advisory backend)</small></div>
+    </div>
+    <div class="contrib-item">
+      <div class="contrib-n" style="color:#534AB7">C5</div>
+      <div class="contrib-body">Live mandi price advisory co-delivered with agronomic advice in one conversational turn ("your crop has early blight; wait 7 days to sell")
+        <small>Closes G5 · addresses O7 · novel over: all surveyed papers — no prior system attempts this integration</small></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px">
+    <div class="stat-card"><div class="stat-num" style="font-size:14px;color:#534AB7">M1–3</div><div class="stat-label">Data collection · knowledge base · RAG pipeline</div></div>
+    <div class="stat-card"><div class="stat-num" style="font-size:14px;color:#534AB7">M4–6</div><div class="stat-label">Agent model training · fusion module · ASR pipeline</div></div>
+    <div class="stat-card"><div class="stat-num" style="font-size:14px;color:#534AB7">M7–9</div><div class="stat-label">Orchestrator · web PWA · integration testing</div></div>
+    <div class="stat-card"><div class="stat-num" style="font-size:14px;color:#534AB7">M10–12</div><div class="stat-label">Evaluation · expert panel · thesis writing</div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const titles=['Title','Introduction','Related work','Research gap','Problem statement','Objectives','Approach','Evaluation','Contributions'];
+let cur=0;
+const slides=document.querySelectorAll('.slide');
+const pillsEl=document.getElementById('pills');
+const counter=document.getElementById('slide-counter');
+titles.forEach((t,i)=>{
+  const b=document.createElement('button');
+  b.className='pill-btn'+(i===0?' active':'');
+  b.textContent=t;
+  b.onclick=()=>goTo(i);
+  pillsEl.appendChild(b);
+});
+function goTo(n){
+  slides[cur].classList.remove('active');
+  document.querySelectorAll('.pill-btn')[cur].classList.remove('active');
+  cur=n;
+  slides[cur].classList.add('active');
+  document.querySelectorAll('.pill-btn')[cur].classList.add('active');
+  document.getElementById('prev').disabled=cur===0;
+  document.getElementById('next').disabled=cur===slides.length-1;
+  counter.textContent=(cur+1)+' / '+slides.length;
+}
+function go(d){goTo(cur+d)}
+counter.textContent='1 / '+slides.length;
+</script>

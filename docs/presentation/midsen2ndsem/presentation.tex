@@ -1,0 +1,274 @@
+\documentclass{beamer}
+
+% --- THEME AND PACKAGES ---
+\usetheme{Berlin} % A clean theme with a sidebar for sections
+\usecolortheme{whale} % <-- CHANGED Color theme set to whale
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} % For including images
+\usepackage{amsmath}  % For math equations
+\usepackage{tikz}     % <-- ADDED for precise image placement
+\usetikzlibrary{positioning}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[export]{adjustbox}
+% --- Define shorthand commands for bold math vectors ---
+\usepackage{amsthm,amsmath,amsfonts,bm,xspace}
+\def\vx{{\bm{x}}}
+\def\veps{{\bm{\epsilon}}}
+\def\vy{{\bm{y}}}
+
+\setbeamertemplate{itemize item}{$\bullet$}
+\setbeamertemplate{itemize subitem}{$\bullet$}
+% --- Puts 1st level enumerate numbers in a circle ---
+% --- NEW CODE FOR CIRCLED NUMBERS (Place AFTER tikz packages) ---
+% --- Puts 1st level enumerate numbers in a FILLED circle ---
+\setbeamertemplate{enumerate item}{%
+	\begin{tikzpicture}[baseline=(a.base)]
+		\node[circle,
+		fill=blue!80!black,  % <-- CHANGED FROM beamerstructure.fg
+		text=white,
+		inner sep=1pt,
+		minimum size=1.2em,
+		anchor=center] (a) {\insertenumlabel};
+	\end{tikzpicture}%
+}
+
+% --- Puts 2nd level enumerate numbers in a FILLED circle ---
+\setbeamertemplate{enumerate subitem}{%
+	\begin{tikzpicture}[baseline=(a.base)]
+		\node[circle,
+		fill=blue!60!black,  % <-- CHANGED FROM theme color mix
+		text=white,
+		inner sep=1pt,
+		minimum size=1.2em,
+		anchor=center] (a) {\insertenumlabel};
+	\end{tikzpicture}%
+}
+
+% --- Puts TOC section numbers in a FILLED circle ---
+\setbeamertemplate{section in toc}{%
+	\leavevmode
+	\begin{tikzpicture}[baseline=(a.base)]
+		\node[circle,
+		fill=blue!80!black,  % Already changed
+		text=white,
+		inner sep=1pt,
+		minimum size=1.2em,
+		anchor=center] (a) {\inserttocsectionnumber};
+	\end{tikzpicture}%
+	\hspace{1ex}%
+	\inserttocsection
+}
+
+
+% This information will be used to create the title page
+\title[Next-Generation Agricultural Expert System]{ 	Towards a Next-Generation Agricultural Expert System: A Multimodal Conversational Approach}
+\subtitle{}
+\author[Shajid Ali Khan]{
+	Presented by: \textcolor{blue!80!black}{\textbf{Shajid Ali Khan}}\\
+	Supervisor: Dr. Deepak Kumar Singh
+}
+\institute[IIIT Lucknow]{
+	% --- MODIFIED AS REQUESTED ---
+	Roll No: MCS25049 \\
+	\textcolor{blue!70!white}{Indian Institute of Information Technology Lucknow} % Replace with your institute
+	% --- END MODIFICATION ---
+}
+\date{\today}
+
+% --- LOGO STATEMENT ---
+% 1. Add your logo file (e.g., "logo.png") to the same folder as your .tex file.
+% 2. Uncomment the line below to add your institute's logo to the title page.
+\logo{\includegraphics[height=1cm]{Logo_IIITL.png}} % <-- UNCOMMENT AND EDIT
+
+
+\begin{document}
+	
+	%----------------------------------------------------------------------
+	% SLIDE 1: TITLE PAGE
+	%----------------------------------------------------------------------
+	\begin{frame}
+		\titlepage % This command renders the title page
+		% --- Manually add logo to the top right corner ---
+		\begin{tikzpicture}[remember picture, overlay]
+			\node[anchor=north east, % Anchor point of the node
+			xshift=-1cm, % Horizontal margin from right edge
+			yshift=-1cm] % Vertical margin from top edge
+			at (current page.south east) % Position relative to page corner
+			{
+				% --- UNCOMMENT AND EDIT THE LINE BELOW ---
+				\includegraphics[height=1cm]{Logo_IIITL.png} % Your logo file
+			};
+		\end{tikzpicture}
+	\end{frame}
+	
+	%----------------------------------------------------------------------
+	% SLIDE 2: TABLE OF CONTENTS
+	%----------------------------------------------------------------------
+	\begin{frame}
+		\frametitle{Table of Contents}
+		% This command automatically generates the TOC
+		% from the \section commands above.
+		\tableofcontents
+	\end{frame}
+	
+	% (This code goes after the TOC's \end{frame})
+
+%----------------------------------------------------------------------
+% SLIDE 3: CONTENT PAGE 1 (Introduction) - REVISED
+%----------------------------------------------------------------------
+\section{Introduction} % <-- Label for TOC navigation
+
+\begin{frame}{Introduction: Next-Generation Agricultural Expert System}
+	\footnotesize
+	\begin{itemize}
+		\item \textbf{The Shift:} Moving from static, rule-based apps to AI-driven conversational agents.
+		
+		\vspace{0.2cm}
+		\item \textbf{The Challenge:} Farming requires synthesizing heterogeneous data (visual anomalies, complex soil chemistry, local policies).
+		
+		\vspace{0.2cm}
+		\item \textbf{Current Limitations:} Generic LLMs hallucinate agronomic advice, lack domain specificity, and fail on low-quality field media.
+		
+		\vspace{0.2cm}
+		\item \textbf{Proposed Solution:} A multimodal framework combining computer vision, dynamic knowledge retrieval, and strict domain constraints.
+	\end{itemize}
+\end{frame}
+
+
+\section{Related Work}
+\begin{frame}{Related Work -- Vision and Multimodality}
+	\footnotesize
+	\begin{itemize}
+		\item \textbf{Multimodal LLMs (e.g., AgriM-LLM):} Attempt to fuse visual encoders with language models for disease management.
+		\begin{itemize}
+			\item \textit{Limitation:} Accuracy degrades heavily on the blurry, compressed media typical of real-world farming.
+		\end{itemize}
+		
+		\vspace{0.2cm}
+		\item \textbf{Diagnostic CNNs:} Proven highly accurate in identifying nutrient deficiencies via static plant imagery.
+		\begin{itemize}
+			\item \textit{Limitation:} Over-reliant on high-fidelity, static images rather than dynamic, noisy field video.
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Related Work -- Architecture and NLP}
+	\footnotesize
+	\begin{itemize}
+		\item \textbf{Retrieval-Augmented Generation (RAG):} The current standard for grounding LLMs in localized data to prevent hallucinations.
+		\begin{itemize}
+			\item \textit{Limitation:} Current RAG implementations lack temporal memory; they treat queries in isolation instead of tracking a full crop cycle.
+		\end{itemize}
+		
+		\vspace{0.2cm}
+		\item \textbf{Lexical Processing:} Standard NLP pipelines often fail to capture localized agricultural vernacular and context. 
+		
+		\vspace{0.2cm}
+		\item \textbf{The Regulatory Void:} Existing chatbots offer chemical/agronomic advice while operating in a legal vacuum, completely bypassing agricultural laws and compliance frameworks.
+	\end{itemize}
+\end{frame}
+
+
+\section{Research Gaps}
+\begin{frame}{Identified Research Gaps}
+
+	\footnotesize
+	\begin{enumerate}
+		\item \textbf{Low-Fidelity Media Handling:} Current models cannot accurately classify anomalies from the low-resolution, noisy images or videos captured by standard smartphones in the field.
+		
+		\vspace{0.2cm}
+		\item \textbf{Contextual Memory Loss:} Existing RAG architectures fail to maintain a continuous, evolving state of a farm over an entire harvesting season.
+		
+		\vspace{0.2cm}
+		\item \textbf{The Compliance Disconnect:} There is an absence of expert systems that cross-reference deep biochemical recommendations with regional agricultural regulations and legal constraints.
+	\end{enumerate}
+\end{frame}
+
+\section{Objectives}
+\begin{frame}{Research Objectives}
+
+	\footnotesize
+	\begin{enumerate}
+		\item \textbf{Enhance Visual Input:} Integrate Super-Resolution (Image and Video) preprocessing to restore low-fidelity field media prior to diagnostic classification.
+		
+		\medskip
+		\item \textbf{Develop Robust Architecture:} Construct an advanced RAG framework equipped with state-tracking to maintain full-season agronomic context.
+		
+		\medskip
+		\item \textbf{Embed Multidisciplinary Intelligence:} Bridge agronomic advice with legal compliance, ensuring all soil and chemical recommendations adhere strictly to local policies.
+	\end{enumerate}
+\end{frame}
+
+\section*{References}
+\begin{frame}[allowframebreaks]{References}
+	\scriptsize
+	\begin{thebibliography}{10}
+		
+		\bibitem{taha2022}
+		Taha M. F., Abdalla A., ElMasry G., Gouda M., et al. (2022).
+		\newblock Using Deep Convolutional Neural Network for Image-Based Diagnosis of Nutrient Deficiencies in Plants Grown in Aquaponics.
+		\newblock \emph{Chemosensors}, 10(2), 45.
+		
+		\bibitem{ahmedm2026}
+		Ahmedm Y., \& Luan R. (2026).
+		\newblock AgriM-LLM: An Agriculture-Specific Multimodal Large Language Model for Intelligent Crop Disease and Pest Management.
+		\newblock \emph{Preprints.org}.
+		
+		\bibitem{patne2025}
+		Patne A. S., Ranjane S. S., Walke O., \& Owhal R. (2025).
+		\newblock AgriSaathi: A Comprehensive Survey on Large Language Models and Multimodal AI for Agricultural Advisory Systems.
+		\newblock \emph{International Journal For Multidisciplinary Research (IJFMR)}, 7(6).
+		
+		\bibitem{yin2025}
+		Yin S., Xi Y., Zhang X., Sun C., \& Mao Q. (2025).
+		\newblock Foundation Models in Agriculture: A Comprehensive Review.
+		\newblock \emph{Agriculture}, 15(8).
+		
+		\bibitem{akbar2025}
+		Akbar N. A., Dembani R., Lenzitti B., \& Tegolo D. (2025).
+		\newblock RAG-Driven Memory Architectures in Conversational LLMs—A Literature Review With Insights Into Emerging Agriculture Data Sharing.
+		\newblock \emph{IEEE Access}, 13.
+		
+		\bibitem{nanthakumar2025}
+		Nanthakumar G., Atchaya R., Brindha S., Harshaa I., \& Kaviya R. (2025).
+		\newblock AgriPath: An AI-Driven Assistant Empowering Farmers with Real-Time Guidance, Multilingual Access, and Tailored Farming Support.
+		\newblock \emph{International Journal of Advanced Research in Science, Communication and Technology (IJARSCT)}, 5(2).
+		
+		\bibitem{sirapani2026}
+		Sirapani D., Revathi J., \& Ramadevi C. (2026).
+		\newblock A SHAP - Enhanced Voice-Based Conversational Agent for Agriculture Using BERT.
+		\newblock \emph{Journal of Computer Technology \& Applications}, 17(1).
+		
+		\bibitem{zhao2022}
+		Zhao Z., Feng W., Xiao J., et al. (2022).
+		\newblock Rapid and Accurate Prediction of Soil Texture Using an Image-Based Deep Learning Autoencoder Convolutional Neural Network Random Forest (DLAC-CNN-RF) Algorithm.
+		\newblock \emph{Agronomy}, 12(12), 3063.
+		
+		\bibitem{kim2023}
+		Kim D., Kim T., Jeon J., \& Son Y. (2023).
+		\newblock Soil-Surface-Image-Feature-Based Rapid Prediction of Soil Water Content and Bulk Density Using a Deep Neural Network.
+		\newblock \emph{Applied Sciences}, 13(7), 4430.
+		
+		\bibitem{hossain2023}
+		Hossain, M. R. H., \& Kabir, M. A. (2023).
+		\newblock Machine Learning Techniques for Estimating Soil Moisture from Smartphone Captured Images.
+		\newblock \emph{Agriculture}, 13(3), 574.
+		
+	\end{thebibliography}
+\end{frame}
+
+\section*{End}
+\begin{frame}
+	\begin{center}
+		\vspace{1.5cm}
+		\Huge \textbf{Thank You!} 
+		
+		\vspace{1cm}
+		\Large \textit{Any Questions?}
+	\end{center}
+\end{frame}
+\end{document} % <-- THIS MUST BE THE VERY LAST LINE

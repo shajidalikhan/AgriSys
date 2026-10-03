@@ -1,0 +1,464 @@
+Chapter 3
+Research Gap
+This chapter presents a rigorous, evidence-based identification of the five research gaps that collectively define the original contribution of this thesis. Each gap is grounded in specific findings from the literature review (Chapter 2), substantiated by a structured evidence table naming the papers responsible for the gap, and mapped forward to the research objective that closes it. The gaps are not incremental improvements over prior work — each represents a structural absence in the current state of the art: a capability that every surveyed system either explicitly lacks or has never attempted.
+
+3.1  Gap Identification Methodology
+Research gaps in this thesis were identified through a three-stage systematic process:
+Stage 1 — Capability inventory: Each of the six primary systems reviewed in Chapter 2 (Farmer.Chat, AgriDoctor, AgriGPT, AgriM-LLM, AgroAskAI, MDPI Agentic) was mapped against seven capability dimensions: multi-agent routing, vision-based disease diagnosis, soil sensor fusion, explainability to farmer, voice/Indic language support, live market price advisory, and multi-crop Indian deployment. This produced a binary capability matrix (Table 2.3).
+Stage 2 — Column-wise gap detection: Each capability dimension was inspected across all six systems. A gap was declared when no system achieved the capability — or when every system achieving partial capability had a documented, specific limitation that prevented full deployment-readiness.
+Stage 3 — Impact quantification: Each gap was connected to a documented agricultural outcome (yield loss, adoption failure, revenue loss, accessibility barrier) to establish that closing the gap has measurable real-world significance beyond academic novelty.
+
+This process identified five primary research gaps (G1–G5). These are presented below in order of architectural centrality — from the broadest system-level gap (G1) to the most specific integration gap (G5). Figure 3.1 provides an overview of all five gaps and their relationships to prior work and research objectives.
+
+G1
+No unified
+multimodal advisory
+session
+G2
+No cross-modal
+sensor+image
+nutrition fusion
+G3
+XAI never
+rendered to
+farmer UI
+G4
+No end-to-end
+Indic voice
+advisory pipeline
+G5
+Market price
+never co-delivered
+with agronomy
+Figure 3.1: Overview of five identified research gaps — each represents a structural absence in the current state of the art.
+
+3.2  G1 — No Unified Multimodal Advisory Session
+
+G1  No Unified Multimodal Advisory Session
+Statement of gap
+No existing system combines disease diagnosis (image input), nutrition deficiency advisory (soil sensor input), crop recommendation (structured tabular input), weather and irrigation scheduling (API data input), and live market price advisory (real-time feed) within a single conversational session. A farmer who asks — in one message — 'my tomato leaves are yellowing, what should I do and should I sell now?' cannot receive a unified, coherent, source-grounded response from any single deployed system today.
+Evidence from literature
+Farmer.Chat (ACM, 2024) handles text and knowledge-base queries only — no image, sensor, or market input. AgriDoctor (IEEE, 2025) routes multimodal inputs to disease and pest components only — four of the five advisory domains are absent. AgriGPT (arXiv, 2025) achieves strong text-based RAG advisory but has no image diagnosis, no sensor integration, and no market advisory. AgroAskAI (arXiv, 2024) covers climate advisory in isolation. The MDPI Agentic system (2026) covers three domains (soil, weather, rice disease) but only for a single crop and without RAG grounding or market integration. No system covers all five domains simultaneously.
+Why this gap matters — agricultural impact
+Agricultural decisions are inherently interdependent. The decision to treat a crop for disease cannot be divorced from the decision of whether to harvest early or treat and wait — which depends on the current mandi price. Fertiliser recommendations are only actionable when paired with a sowing calendar adjusted for the current weather forecast. Existing systems force farmers to seek advisory from multiple disconnected sources, introducing inconsistency, delay, and decision fatigue. The ICAR extension model is designed around integrated advisory — the proposed system replicates this integration digitally.
+Closest prior attempt and its remaining limitation
+The MDPI Agentic framework (Scientific Reports, 2026) comes closest, with four agents covering soil monitoring, weather, rice disease detection, and a supervisor chatbot. However, it covers only one crop (rice), only three domains, has no RAG knowledge grounding, no market advisory, no voice input, and no XAI. It demonstrates that multi-agent agricultural chatbots are feasible — but not that a unified five-domain system has been built.
+Research objective that closes this gap
+O1 — Design a LangGraph-based orchestrator that classifies intent and routes inputs to five specialist agents in parallel, merging responses into a single coherent advisory reply with multi-turn session memory.
+
+Table 3.1: Evidence matrix for G1 — advisory domain coverage across all surveyed systems
+System
+Text
+query
+Disease
+image
+Sensor
+data
+Crop
+rec.
+Weather
+Market
+price
+Multi-crop
+All five
+domains
+Farmer.Chat (ACM 2024)
+Yes
+No
+No
+No
+No
+No
+No
+No
+AgriDoctor (IEEE 2025)
+Yes
+Yes
+No
+No
+No
+No
+No
+No
+AgriGPT (arXiv 2025)
+Yes
+Partial
+No
+No
+No
+No
+No
+No
+AgriM-LLM (Pre. 2026)
+Yes
+Yes
+No
+No
+No
+No
+No
+No
+AgroAskAI (arXiv 2024)
+Yes
+No
+No
+No
+Yes
+No
+No
+No
+MDPI Agentic (2026)
+Yes
+Partial
+Partial
+No
+Yes
+No
+No
+No
+Proposed system
+Yes
+Yes
+Yes
+Yes
+Yes
+Yes
+Yes
+Yes
+Table 3.1: Advisory domain coverage across all surveyed systems. No prior system achieves coverage across all five domains. Proposed system is the first to do so.
+
+3.3  G2 — No Cross-Modal Soil Sensor and Leaf Image Fusion for Nutrition Advisory in a Conversational System
+
+G2  No Cross-Modal Sensor + Image Nutrition Fusion in a Dialogue
+Statement of gap
+No existing system fuses real-time soil sensor readings (nitrogen, phosphorus, potassium, pH, electrical conductivity) with leaf image features within a conversational advisory interface to diagnose nutrient deficiency and generate a fertiliser dose recommendation. Both modalities exist in isolation — vision models diagnose disease from images, and rule-based systems recommend fertiliser from soil NPK values — but no system combines them cross-modally within a live, farmer-accessible dialogue.
+Evidence from literature
+AgriM-LLM (Preprints, 2026) represents the state of the art in agricultural vision encoding — its Multi-Scale Feature Fusion encoder captures subtle disease symptoms from leaf images, but soil sensor data is entirely absent from its input. The system produces disease and pest identification only; nutrient deficiency requires both visual symptom recognition (yellowing patterns, interveinal chlorosis, tip burn) and soil measurement correlation (which nutrient is actually deficient) — AgriM-LLM addresses only one half. Cross-modal fusion papers in plant science (PMC, 2025) have demonstrated that combining image and sensor data improves nutrition diagnosis accuracy by 23% over image-only approaches — but these systems operate as offline inference pipelines with no conversational interface, no farmer-accessible output, and no RAG-grounded treatment recommendation.
+Why this gap matters — agricultural impact
+The Soil Health Card scheme has issued 230 million cards to Indian farmers, yet only 14.6% acted on the recommendations (Ministry of Agriculture, 2023). The primary reason identified in field studies is that farmers cannot translate NPK numbers on paper into actionable fertiliser dosage without agronomist support. Simultaneously, visual nutrient deficiency symptoms — yellowing leaves, stunted growth, purple discolouration — are highly ambiguous: identical symptoms can result from nitrogen deficiency, iron deficiency, or certain fungal infections. Cross-modal fusion resolves this ambiguity by jointly analysing the visual symptom pattern and the soil chemistry, enabling confident diagnosis and precise dosage output in the farmer's language.
+Closest prior attempt and its remaining limitation
+The MDPI Agentic framework (2026) deploys Agent A for soil NPK monitoring and Agent C for rice disease detection — but these operate as separate agents with no cross-modal fusion. Agent A does not use leaf image features; Agent C does not use soil readings. No fusion network integrates both modalities for nutrition deficiency specifically. The proposed system introduces a dedicated cross-modal MLP that concatenates ResNet-50 leaf image feature vectors with normalised soil sensor readings into a unified representation for deficiency classification and dose prediction — a design that no prior agricultural AI system implements.
+Research objective that closes this gap
+O3 — Develop a cross-modal fusion network combining ResNet-50 leaf image features with real-time NPK/pH/EC sensor readings to generate fertiliser dose recommendations aligned with ICAR Soil Health Card norms, deployed within the conversational advisory loop.
+
+Paper
+What it achieves
+Specific limitation proving the gap
+AgriM-LLM
+(Pre. 2026)
+State-of-the-art vision encoder (EVE-MSFF) for disease; multi-stage fine-tuning; AKE-QFormer for domain knowledge injection
+No soil sensor input of any kind; nutrient deficiency not addressed; standalone model with no conversational interface
+MDPI Agentic
+(2026)
+Agent A monitors soil NPK; Agent C detects rice disease via CNN; both connected to supervisor chatbot
+No cross-modal fusion between soil and image — agents operate independently; rice only; no fertiliser dose calculation
+PMC Cross-modal
+(2025)
+Demonstrates 23% accuracy improvement from fusing image + sensor data for crop disease recognition in controlled conditions
+Offline inference pipeline only; no farmer-facing interface; no conversational loop; no RAG grounding for treatment protocols
+XAI-CROP
+(Springer 2024)
+Soil NPK and climate features used for crop recommendation with SHAP explainability; strong agronomist agreement
+No image input; no visual symptom recognition; rule-based NPK thresholds only; no deficiency diagnosis from combined modalities
+Farmer.Chat
+(ACM 2024)
+Text-based advisory grounded in ICAR knowledge base; covers nutrition advisory topics
+Nutrition advice is knowledge-retrieval only — not grounded in the farmer's actual soil readings or visible leaf symptoms
+Table 3.2: Evidence matrix for G2 — cross-modal sensor-image nutrition fusion across surveyed systems. No system achieves fusion within a conversational loop.
+
+3.4  G3 — Explainable AI Never Rendered to the Farmer in Any Deployed System
+
+G3  XAI Never Rendered to the Farmer in Any Deployed Agricultural AI System
+Statement of gap
+No deployed agricultural AI system — chatbot, mobile application, or web platform — renders visual explainability outputs (Grad-CAM saliency heatmaps, SHAP feature importance charts) directly to the farmer as part of the advisory response. Explainability techniques are extensively used in agricultural AI research as internal quality-control tools for model developers and as evaluation metrics for researchers, but no system has completed the critical last step: putting the explanation in the farmer's hands at the point of advice delivery.
+Evidence from literature
+XAI-CROP (Springer NCA, 2024) applies SHAP TreeExplainer to XGBoost crop recommendation models and generates feature importance charts as research output — the paper explicitly presents them as researcher-facing model validation tools, not as farmer-facing UI components. LLMI-CDP (Scientific Reports, 2025) generates Grad-CAM saliency maps during evaluation to verify that the disease model attends to the correct leaf region — again as a quality-control mechanism, not as output to the farmer. AgriDoctor (IEEE, 2025) produces classification confidence scores but provides no visual attribution. The Agentic XAI paper (arXiv, 2025) explicitly generates SHAP-based explanations for crop scientists evaluated on seven technical quality metrics — farmer readability is not a design criterion. Across all 25+ papers reviewed, not a single system renders a Grad-CAM overlay or SHAP chart in a farmer-accessible interface.
+The trust and adoption evidence
+XAI-CROP (2024) provides the strongest empirical evidence that this gap has real consequences: farmers shown SHAP feature bars alongside crop recommendations adopted the AI advice 31% more frequently than those shown recommendations without explanation. A parallel finding from Farmer.Chat (ACM, 2024) notes that even with 565,000 users, adoption of AI-generated advisory recommendations that cannot be verified by the farmer remains below 60%. The consistent finding across agricultural AI adoption literature is that farmers — particularly smallholder farmers with limited formal education — require the ability to interrogate AI reasoning before trusting actionable recommendations. Visual XAI provides exactly this capability.
+Closest prior attempt and its remaining limitation
+The Agentic XAI framework (arXiv, 2025) comes closest by iteratively refining SHAP explanations through LLM-driven rounds until agronomist-rated quality reaches a threshold. However, this system targets crop scientists — its explanations contain technical notation, numerical SHAP values, and crop science terminology inappropriate for low-literacy farmers. The language, visual format, and assumed background knowledge all differ from what is required for a farmer-facing interface. The proposed system adapts the concept of iterative explanation refinement but constrains output to two farmer-readable visualisation types: Grad-CAM colour heatmaps overlaid on the farmer's uploaded leaf photo, and horizontal SHAP bar charts rendered in Hindi-labelled axes.
+Research objective that closes this gap
+O5 — Surface Grad-CAM saliency heatmaps for disease diagnosis and SHAP feature importance bar charts for crop recommendation directly within the React PWA advisory response — as a farmer-facing UI component, not a research output.
+
+Table 3.3: XAI implementation status across surveyed systems — generated vs rendered to farmer
+System
+XAI technique used
+XAI purpose
+Shown to
+researcher
+Shown to
+farmer
+Farmer-readable
+format
+XAI-CROP (2024)
+SHAP TreeExplainer
+Crop rec. validation
+Yes
+No
+No — Jupyter notebook output
+LLMI-CDP (2025)
+Grad-CAM
+Model quality check
+Yes
+No
+No — internal heatmap only
+Agentic XAI (2025)
+SHAP + LLM refinement
+Scientist explanation
+Yes
+No
+No — technical language, numerical
+AgriDoctor (2025)
+Confidence scores
+Classification output
+Yes
+No
+No — scalar score, no visual attr.
+Farmer.Chat (2024)
+None
+N/A
+No
+No
+N/A — no XAI at any level
+AgriM-LLM (2026)
+None
+N/A
+No
+No
+N/A — prediction output only
+Proposed system
+Grad-CAM + SHAP
+Farmer advisory UI
+Yes
+Yes
+Yes — colour heatmap + Hindi SHAP bars
+Table 3.3: XAI implementation status across all surveyed systems. Every prior system generates XAI output for researchers; none renders it to the farmer. The proposed system is the first to close this gap.
+
+3.5  G4 — No End-to-End Indic Voice-to-Advisory Pipeline in Any Agricultural System
+
+G4  No End-to-End Indic Voice-to-Advisory Pipeline
+Statement of gap
+No agricultural AI system has implemented a complete, end-to-end pipeline that accepts a farmer's voice query in Hindi or any other Indic language, processes it through an ASR model, routes it to a RAG-grounded domain advisory backend, and delivers the response as spoken audio via TTS — within a single, integrated system. Each component of this pipeline exists independently in the literature; their integration into a unified agricultural advisory voice interface has not been achieved in any prior work.
+Evidence from literature
+The Indic ASR Benchmark (arXiv, 2025) provides the strongest evidence that the technology is ready: Whisper large-v3 achieves WER 16.2% for Hindi agricultural speech on 10,934 real farm voice recordings. The benchmark explicitly concludes that ASR performance for Hindi is production-grade — but the paper itself contains no advisory backend. Farmer.Chat (ACM, 2024) integrates Bhashini ASR for voice input — the only deployed system to do so — but voice input routes to a text-based RAG pipeline with text output only; no TTS response delivery is implemented, and Bhashini coverage extends partially to only two or three Indic languages in the deployment. AgriDoctor (IEEE, 2025) is Chinese-English only with no voice input. AgriGPT (arXiv, 2025) is text-only. AgroAskAI (arXiv, 2024) claims multilingual support but provides no ASR or TTS implementation details.
+Why this gap matters — accessibility impact
+India has a rural literacy rate of approximately 67.8% (Census 2021), with substantially lower rates among women and older farmers in agricultural states. Text-based interfaces — the modality used by all prior systems — structurally exclude this population. The NSSO Agricultural Survey (2019) found that 78% of farmers aged 50+ in UP, Bihar, and MP had never sent a text message. Voice is not a preference for these farmers — it is the only viable interaction modality. The linguistic diversity compounds this: Hindi alone cannot serve Tamil Nadu, Karnataka, Maharashtra, West Bengal, or Punjab — states that together account for over 40% of India's cultivated area. An agricultural AI system that cannot speak to farmers in their language is not an agricultural AI system for India.
+The pipeline gap — three connected components, never assembled
+The gap is specifically an integration gap, not a component gap. Component 1 (Indic ASR): Whisper large-v3 fine-tuned on agricultural speech achieves production-grade WER. Component 2 (Multilingual RAG): Hindi-English bilingual knowledge indices over ICAR documents can be built with E5-large-v2 multilingual embeddings. Component 3 (Indic TTS): Bhashini API delivers production-quality TTS for 10+ Indic languages. What has never been done is assembling these three components into a single pipeline where a farmer speaks into a phone, the system understands, reasons from verified agronomic knowledge, and speaks the advisory response back — in the same language, within four seconds.
+Research objective that closes this gap
+O6 — Implement an end-to-end voice advisory pipeline using Whisper large-v3 (Indic fine-tuned) for ASR and Bhashini TTS for response delivery, targeting WER < 20% for Hindi and < 30% for five regional languages, with end-to-end latency < 4 seconds.
+
+Table 3.4: Evidence matrix for G4 — voice pipeline component availability vs integration status
+System
+Indic
+ASR input
+Multi-lang
+NLP
+RAG
+backend
+Indic
+TTS output
+Full pipeline
+integrated
+Farmer.Chat (ACM 2024)
+Partial
+Partial
+Yes
+No
+No
+AgriDoctor (IEEE 2025)
+No
+No
+No
+No
+No
+AgriGPT (arXiv 2025)
+No
+No
+Yes
+No
+No
+AgriM-LLM (Pre. 2026)
+No
+No
+No
+No
+No
+AgroAskAI (arXiv 2024)
+Partial
+Partial
+No
+No
+No
+Indic ASR Benchmark 2025
+Yes
+No
+No
+No
+No
+Bhashini API (MeitY)
+Yes
+Yes
+No
+Yes
+No
+Proposed system
+Yes
+Yes
+Yes
+Yes
+Yes
+Table 3.4: Voice pipeline component availability vs full integration. Every component exists; no prior system integrates all four into an end-to-end agricultural voice advisory pipeline.
+
+3.6  G5 — Live Market Price Advisory Never Co-Delivered with Agronomic Advice
+
+G5  Live Market Price Never Co-Delivered with Agronomic Advisory
+Statement of gap
+No existing agricultural AI system integrates live mandi price data, price forecasting, and sell/hold advisory within the same conversational session as agronomic advice (disease diagnosis, crop recommendation, nutrition advisory). Market intelligence and agronomic advisory exist in completely separate silos — different platforms, different data sources, different interaction paradigms — despite the fact that a farmer's actual decision requires both simultaneously.
+Evidence from literature
+Across all six systems reviewed in Chapter 2, market price is uniformly absent. Farmer.Chat (ACM, 2024) covers crop management and pest advisory — no market data. AgriDoctor (IEEE, 2025) covers disease and pest identification — no market data. AgriGPT (arXiv, 2025) — the most comprehensive knowledge ecosystem reviewed — explicitly notes market price forecasting as a future work direction, confirming it is not yet present. AgroLLM (arXiv, 2025) builds a domain knowledge pipeline for crop management with no market integration. The MDPI Agentic framework (2026) covers soil, weather, and disease — no market agent. Agmarknet and eNAM exist as standalone government platforms accessible only to farmers with digital literacy and awareness of the specific websites, with no conversational interface, no AI advisory layer, and no integration with agronomic data.
+Why this gap matters — economic impact
+The decision to treat a disease and hold the crop, or harvest early and sell before further loss, is simultaneously an agronomic decision and a market decision. It cannot be made correctly with agronomic data alone. eNAM Annual Report (2023) documents that farmers sell 30–40% below optimal price due to: (1) selling at distress timing without price trend awareness, (2) travelling to the nearest mandi without knowing that a mandi 30 km further offers 15% higher price, and (3) having no forecast of whether prices will rise or fall over the next seven days. These are precisely the outputs a market advisory agent can deliver — but only if it shares a conversational session with the agronomic advisor, so that the two recommendations are synthesised into a single actionable answer.
+The compound query problem
+Real farmer queries are compound. 'My tomato has a disease, should I treat it or sell the crop now?' cannot be answered by a disease agent alone. It requires: (1) disease identification and severity assessment, (2) current tomato price at the nearest mandi, (3) price trend over the next seven days, (4) estimated crop loss if untreated vs treatment cost, (5) MSP comparison. Only a system with both a disease agent and a market agent operating in the same session — with a response-merging orchestrator — can synthesise these inputs into a coherent advisory answer. This is G5's core contribution.
+Research objective that closes this gap
+O7 — Integrate Agmarknet and eNAM live mandi price feeds (15-minute refresh) with a Prophet-based 7-day price forecast model to co-deliver sell, hold, or transport-to-mandi advisory within the same conversational session as agronomic advice.
+
+Paper
+What it achieves
+Specific limitation proving the gap
+Farmer.Chat
+(ACM 2024)
+Text advisory across crop management, pest, and nutrition topics; RAG-grounded responses; 565k users
+No market price data, no Agmarknet/eNAM integration, no sell/hold advisory at any level
+AgriGPT
+(arXiv 2025)
+Tri-RAG over 342k QA pairs; strongest knowledge grounding in surveyed literature; domain-specific LLM
+Market forecasting listed as future work — explicitly absent from current system scope
+AgroLLM
+(arXiv 2025)
+Domain Knowledge Processing Layer; structured ontology enrichment; crop management advisory
+No market integration; DKPL covers agronomic knowledge only; no Agmarknet/eNAM connection
+AgriDoctor
+(IEEE 2025)
+Intent-routing multi-agent for disease and pest; AgriMM benchmark; 400k annotated disease images
+Market price not in scope; system architecture has no market data agent or price retrieval component
+eNAM platform
+(Govt.)
+Live mandi price data for 22M registered farmers; MSP comparison; price trend charts available on web
+No conversational interface; no agronomic advisory; no AI layer; requires digital literacy; not integrated with any advisory system
+Table 3.5: Evidence matrix for G5 — market price integration across surveyed systems and the eNAM platform. No system connects market intelligence to agronomic advisory.
+
+3.7  Consolidated Gap Evidence Matrix
+Table 3.6 presents the complete, consolidated gap evidence matrix — mapping each of the five gaps to its research stream, the specific papers that establish the gap, the paper that comes closest to addressing it, the remaining limitation, and the proposed research objective that closes it. This matrix serves as the formal bridge between the literature review (Chapter 2), the research gaps (this chapter), and the research objectives (Chapter 4).
+
+Table 3.6: Consolidated research gap evidence matrix
+Gap
+Research stream
+Papers establishing gap
+Closest prior attempt
+Remaining limitation
+Closing objective
+G1
+Multi-agent chatbots (§2.2)
+Farmer.Chat: text only; AgriDoctor: disease only; AgriGPT: text RAG; AgroAskAI: climate only
+MDPI Agentic (4 agents, rice, 3 domains)
+Single crop; no RAG grounding; no market; no XAI; no voice
+O1 — LangGraph orchestrator, 5 specialist agents
+G2
+VLMs (§2.3) + Sensor papers
+AgriM-LLM: image only, no sensor; MDPI Agentic: agents separate, no fusion; PMC (2025): offline only
+MDPI Agentic (separate soil + disease agents)
+No fusion network; single crop (rice); no conversational interface; no dose output
+O3 — ResNet-50 + sensor MLP cross-modal fusion
+G3
+XAI in agriculture (§2.5)
+XAI-CROP: SHAP internal; LLMI-CDP: Grad-CAM internal; Agentic XAI: scientists only, not farmer
+Agentic XAI (iterative SHAP for scientists)
+Explanation format, language and detail level inappropriate for low-literacy farmers; no farmer UI
+O5 — Grad-CAM + SHAP rendered in React PWA
+G4
+Speech & NLP (§2.6)
+Indic ASR Benchmark: WER 16.2% Hindi but no advisory backend; Farmer.Chat: ASR input only, no TTS
+Farmer.Chat (partial ASR, no TTS)
+No TTS output; only 2-3 languages; voice input not connected to RAG + response generation
+O6 — Whisper ASR + RAG + Bhashini TTS pipeline
+G5
+Market advisory (§2.2, §2.4)
+All 6 chatbots: no market; AgriGPT: market listed as future work; eNAM: no conversational interface
+None — no prior system attempts this
+No system has a market agent co-deployed with agronomic agents in any shared advisory session
+O7 — Agmarknet + eNAM + Prophet co-delivery
+Table 3.6: Consolidated research gap evidence matrix. Each gap is supported by named papers, its closest prior attempt, and the specific remaining limitation that defines the proposed contribution.
+
+
+3.8  Significance of the Identified Gaps
+The five identified gaps are significant for two reasons beyond their academic novelty. First, each gap has a quantified agricultural impact — a documented real-world consequence of the gap remaining open, measured in yield loss, adoption failure, or revenue loss. Second, the gaps are structurally interconnected: G1 (no unified session) is the architectural gap that the other four gaps compound. G2, G3, G4, and G5 each represent a specific capability that is absent from the unified session — so closing G1 without closing the others would still produce an incomplete system.
+
+Table 3.7: Quantified agricultural impact of each research gap
+Gap
+Gap description
+Affected population
+Documented impact
+Source
+G1
+No unified multimodal advisory session
+146M smallholder farm households
+26-30% annual yield loss from disease + suboptimal decisions across all five domains
+FAO (2022); ICAR (2023); ASSOCHAM (2023)
+G2
+No cross-modal nutrition fusion in dialogue
+230M Soil Health Card recipients
+Only 14.6% acted on recommendations — sensor data exists but is not actionably delivered
+Ministry of Agriculture (2023); NABARD (2023)
+G3
+XAI not rendered to farmer
+All agricultural AI users
+31% lower adoption of AI recommendations without explainability; <60% action rate on Farmer.Chat advice
+XAI-CROP (Springer 2024); Farmer.Chat (2024)
+G4
+No end-to-end Indic voice pipeline
+~500M rural Indians with limited digital text literacy
+Structural exclusion from all text-based agricultural AI systems
+Census 2021; NSSO Agricultural Survey (2019)
+G5
+Market price not co-delivered with agronomy
+120M+ farm households selling in mandis
+Farmers sell 30-40% below optimal price due to no integrated price forecast with agronomic advisory
+eNAM Annual Report (2023)
+Table 3.7: Quantified agricultural impact of each research gap — connecting technical gaps to real-world farmer outcomes.
+
+Together these five gaps represent the complete set of structural deficiencies that prevent any existing agricultural AI system from functioning as a deployment-ready, trustworthy, and accessible advisory solution for Indian smallholder farmers. The proposed research addresses all five gaps simultaneously — a design choice that is not merely additive but architecturally necessary: a system that closes G1 but not G3 is untrustworthy; a system that closes G4 but not G2 excludes sensor-equipped farms; a system that closes all four but not G5 delivers incomplete advisory for the majority of real farmer queries.
+
+
+References
+The following references are cited in Chapter 3. Complete bibliographic details are consolidated in the thesis reference list.
+
+[1]  Farmer.Chat: Scaling AI-Powered Agricultural Services for Smallholder Farmers. ACM, 2024. arXiv:2409.08916.
+[2]  AgriDoctor: A Modular Multimodal Framework for Crop Disease Diagnosis and Agricultural Knowledge Interaction. IEEE / arXiv:2509.17044, September 2025.
+[3]  AgriGPT: A Large Language Model Ecosystem for Agriculture with Tri-RAG and Multi-Agent Data Engine. arXiv:2508.08632, August 2025.
+[4]  AgriM-LLM: An Agriculture-Specific Multimodal Large Language Model for Intelligent Crop Disease and Pest Management. Preprints.org, January 2026. DOI: 10.20944/preprints202601.0646.v1.
+[5]  AgroAskAI: A Multi-Agentic Framework for Agricultural Advisory and Climate Adaptation. arXiv, December 2024.
+[6]  Agentic AI-Driven Autonomous Decision Support System for Smart Agriculture (CropiBot / MDPI Agentic Framework). Scientific Reports, January 2026.
+[7]  Enhancing Crop Recommendation with Explainable Artificial Intelligence (XAI-CROP). Neural Computing and Applications, Springer, 2024.
+[8]  LLMI-CDP: A Large Language Model for Multimodal Identification of Crop Diseases and Pests. Scientific Reports (Nature), 2025. DOI: 10.1038/s41598-025-01908-0.
+[9]  Agentic XAI Framework for Agricultural Recommendation Using SHAP-Based LLM Iterative Refinement. arXiv, 2025.
+[10]  Benchmarking Automatic Speech Recognition for Indian Languages in Agricultural Contexts. arXiv, 2025.
+[11]  MeitY / Bhashini. Digital Language Inclusion Platform for India. Ministry of Electronics and Information Technology, Government of India, 2024. Available at: bhashini.gov.in.
+[12]  AgroLLM: Connecting Farmers and Agricultural Practices through Large Language Models with Domain Knowledge Processing. arXiv:2503.04788, 2025.
+[13]  AgriChain: Visually-Grounded Expert-Verified Reasoning for Agricultural Vision-Language Models. arXiv, 2025.
+[14]  Cross-Modal Data Fusion via Vision-Language Model for Crop Disease Recognition. PMC / MDPI, 2025.
+[15]  RAG-Based Large Language Model Advisory Framework for Farmers. Journal of Agricultural Engineering, 2026.
+[16]  MIRAGE: A Benchmark for Multimodal Information-Seeking and Reasoning in Agricultural Expert-Guided Conversations. arXiv, 2025.
+[17]  Agricultural Census of India 2021. Ministry of Agriculture and Farmers Welfare, Government of India, 2021.
+[18]  Ministry of Agriculture and Farmers Welfare. Soil Health Card Scheme Implementation Report 2023. Government of India, New Delhi, 2023.
+[19]  National Bank for Agriculture and Rural Development (NABARD). Rural Pulse Survey 2023. NABARD, Mumbai, 2023.
+[20]  eNAM Annual Report 2022–23. National Agriculture Market, Ministry of Agriculture, Government of India, 2023.
+[21]  Food and Agriculture Organization (FAO). The State of Food and Agriculture 2022. FAO, Rome, 2022.
+[22]  Indian Council of Agricultural Research (ICAR). Annual Report 2022–23. ICAR, New Delhi, 2023.
+[23]  ASSOCHAM. Agricultural Losses Due to Crop Disease and Market Asymmetry: India 2023. Associated Chambers of Commerce and Industry of India, 2023.
+[24]  NSSO Agricultural Survey on Digital Literacy and Mobile Usage Among Farmers. National Sample Survey Office, Government of India, 2019.
+[25]  Selvaraju, R.R. et al. Grad-CAM: Visual Explanations from Deep Networks via Gradient-Based Localization. ICCV, 2017.
+[26]  Lundberg, S.M. and Lee, S.I. A Unified Approach to Interpreting Model Predictions (SHAP). NeurIPS, 2017. arXiv:1705.07874.
+[27]  Radford, A. et al. Robust Speech Recognition via Large-Scale Weak Supervision (Whisper). ICML, 2023. arXiv:2212.04356.
+[28]  RAGAS: Automated Evaluation of Retrieval-Augmented Generation. arXiv:2309.15217, 2023.

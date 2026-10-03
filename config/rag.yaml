@@ -1,0 +1,27 @@
+# config/rag.yaml — RAG Ingestion & Retrieval Configuration
+
+ingestion:
+  chunk_size_tokens: 512
+  chunk_overlap_tokens: 128
+  supported_formats: ["pdf", "html", "csv", "txt"]
+
+vector_store:
+  provider: "qdrant"
+  collection_name: "agrisys_knowledge"
+  qdrant_url: "${QDRANT_URL:-http://localhost:6333}"
+  api_key: "${QDRANT_API_KEY}"
+  distance: "Cosine"
+
+retrieval:
+  hyde_enabled: true
+  top_k_bm25: 20
+  top_k_dense: 20
+  top_k_cross_encoder: 5
+  top_k_final: 5
+  cross_encoder_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  mmr_lambda: 0.7
+  metadata_boost: 0.15
+
+guard:
+  hallucination_score_threshold: 0.70
+  escalate_webhook_url: "${KCC_WEBHOOK_URL}"

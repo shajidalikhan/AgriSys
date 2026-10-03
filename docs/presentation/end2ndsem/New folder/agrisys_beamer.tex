@@ -1,0 +1,571 @@
+% ============================================================
+%  AgriSys Thesis Beamer Presentation
+%  Towards a Next-Generation Agricultural Expert System:
+%  A Multimodal Conversational Approach
+%  Compile with: pdflatex (2 passes)
+% ============================================================
+
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+% ── Packages ──────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{fontawesome5}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{csquotes}
+
+% Fallback definition for Unicode Rupee symbol (₹)
+\DeclareUnicodeCharacter{20B9}{Rs.}
+
+% ── Colour Palette ────────────────────────────────────────
+\definecolor{DarkBg}{HTML}{0F2027}
+\definecolor{MidBg}{HTML}{1A3A4A}
+\definecolor{Accent}{HTML}{02C39A}
+\definecolor{Purple}{HTML}{534AB7}
+\definecolor{PurpleL}{HTML}{EEEDFE}
+\definecolor{Teal}{HTML}{0F6E56}
+\definecolor{TealL}{HTML}{E1F5EE}
+\definecolor{Coral}{HTML}{993C1D}
+\definecolor{CoralL}{HTML}{FAECE7}
+\definecolor{Amber}{HTML}{854F0B}
+\definecolor{AmberL}{HTML}{FAEEDA}
+\definecolor{Green}{HTML}{3B6D11}
+\definecolor{GreenL}{HTML}{EAF3DE}
+\definecolor{Blue}{HTML}{185FA5}
+\definecolor{BlueL}{HTML}{E6F1FB}
+\definecolor{RedC}{HTML}{A32D2D}
+\definecolor{RedL}{HTML}{FCEBEB}
+\definecolor{GrayC}{HTML}{5F5E5A}
+\definecolor{GrayL}{HTML}{F1EFE8}
+\definecolor{Muted}{HTML}{64748B}
+\definecolor{Border}{HTML}{E2E8F0}
+\definecolor{OffWhite}{HTML}{F4F6F8}
+\definecolor{DarkText}{HTML}{1E293B}
+\definecolor{SlateBlue}{HTML}{8AADCC}
+
+% ── Beamer Theme Setup ────────────────────────────────────
+\usetheme{default}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle continuation}{}
+
+% Fonts
+\usefonttheme{professionalfonts}
+\setbeamerfont{frametitle}{size=\large, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\small}
+\setbeamerfont{title}{size=\LARGE, series=\bfseries}
+\setbeamerfont{subtitle}{size=\normalsize}
+
+% Colours
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{frametitle}{fg=DarkBg, bg=white}
+\setbeamercolor{framesubtitle}{fg=Muted}
+\setbeamercolor{normal text}{fg=DarkText}
+\setbeamercolor{alerted text}{fg=Coral}
+\setbeamercolor{example text}{fg=Teal}
+\setbeamercolor{block title}{bg=PurpleL, fg=Purple}
+\setbeamercolor{block body}{bg=OffWhite, fg=DarkText}
+\setbeamercolor{block title alerted}{bg=CoralL, fg=Coral}
+\setbeamercolor{block body alerted}{bg=CoralL!50, fg=DarkText}
+\setbeamercolor{block title example}{bg=TealL, fg=Teal}
+\setbeamercolor{block body example}{bg=TealL!50, fg=DarkText}
+
+% ── Frame Title with left accent bar ──────────────────────
+\setbeamertemplate{frametitle}{%
+  \vspace{0.3em}%
+  \begin{tikzpicture}[overlay, remember picture]
+    \fill[Purple] ([xshift=0pt, yshift=-0.15em]current page.north west)
+      rectangle ([xshift=4pt, yshift=-2.2em]current page.north west);
+  \end{tikzpicture}%
+  \hspace{0.35em}%
+  \insertframetitle%
+  \ifx\insertframesubtitle\empty\else
+    \\[0.1em]
+    {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle}%
+  \fi
+  \vspace{-0.2em}
+}
+
+% ── Footer ────────────────────────────────────────────────
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth, ht=1.8em, dp=0.5em]{footline}%
+    \hspace{1em}%
+    {\footnotesize\color{Muted} AgriSys — A Multimodal Agricultural Expert System}%
+    \hfill%
+    {\footnotesize\color{Muted}\insertframenumber\,/\,\inserttotalframenumber}%
+    \hspace{1em}%
+  \end{beamercolorbox}%
+}
+
+% ── tcolorbox Styles ──────────────────────────────────────
+\tcbset{
+  agricard/.style={
+    enhanced, breakable,
+    colback=#1!8, colframe=#1, boxrule=0.4pt,
+    arc=3pt, left=5pt, right=5pt, top=4pt, bottom=4pt,
+    fonttitle=\bfseries\small, coltitle=#1,
+    attach boxed title to top left={yshift=-2mm, xshift=4mm},
+    boxed title style={colback=#1!15, colframe=#1, boxrule=0.3pt, arc=2pt}
+  },
+  tagbox/.style={
+    enhanced, nobeforeafter,
+    colback=#1, colframe=#1, boxrule=0pt,
+    arc=3pt, left=4pt, right=4pt, top=1pt, bottom=1pt,
+    fontupper=\bfseries\tiny\color{white}
+  },
+  gapbox/.style={
+    enhanced, breakable,
+    colback=OffWhite, colframe=Border, boxrule=0.4pt,
+    arc=3pt, left=4pt, right=4pt, top=2pt, bottom=2pt,
+    borderline west={3pt}{0pt}{#1}
+  },
+  psbox/.style={
+    enhanced,
+    colback=PurpleL!40, colframe=Purple, boxrule=0.8pt,
+    arc=3pt, left=8pt, right=6pt, top=5pt, bottom=5pt,
+    borderline west={4pt}{0pt}{Purple}
+  },
+  contribbox/.style={
+    enhanced,
+    colback=MidBg!80, colframe=MidBg, boxrule=0.4pt,
+    arc=3pt, left=4pt, right=4pt, top=2.5pt, bottom=2.5pt,
+    borderline west={5pt}{0pt}{Accent}
+  },
+  layerrow/.style={
+    enhanced,
+    colback=#1!12, colframe=#1, boxrule=0.4pt,
+    arc=2pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+  }
+}
+
+% ── Bullet style ──────────────────────────────────────────
+\setbeamertemplate{itemize item}{\color{Purple}\textbullet}
+\setbeamertemplate{itemize subitem}{\color{Muted}$\rightarrow$}
+\setlist[itemize]{leftmargin=1.2em, itemsep=0.25em, topsep=0.2em}
+
+% ══════════════════════════════════════════════════════════
+%  DOCUMENT
+% ══════════════════════════════════════════════════════════
+\begin{document}
+
+% ── TITLE FRAME ───────────────────────────────────────────
+{
+\setbeamertemplate{footline}{}
+\setbeamercolor{background canvas}{bg=DarkBg}
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    % Left accent strip
+    \fill[Accent] (current page.north west)
+      rectangle ([xshift=0.12\paperwidth]current page.south west);
+    % Subtle noise texture via rectangles
+    \foreach \y in {0.5,1.0,...,5.0} {
+      \fill[MidBg!60] ([xshift=0.12\paperwidth, yshift=\y cm]current page.south west)
+        rectangle ([xshift=\paperwidth, yshift=\y cm + 0.02cm]current page.south west);
+    }
+  \end{tikzpicture}
+
+  \begin{columns}[T]
+    \begin{column}{0.67\textwidth}
+      \vspace{1.2em}
+      {\tiny\bfseries\color{Accent}\MakeUppercase{Thesis Presentation}}\par
+      \vspace{0.6em}
+      {\color{white}\LARGE\bfseries Towards a Next-Generation\\[0.3em]
+       Agricultural Expert System}\par
+      \vspace{0.5em}
+      {\color{Accent}\large\itshape A Multimodal Conversational Approach}\par
+      \vspace{0.9em}
+      \textcolor{MidBg!30}{\rule{0.85\textwidth}{0.4pt}}\par
+      \vspace{0.5em}
+      {\small\color{SlateBlue}
+        \textcolor{Muted}{Domain:} Artificial Intelligence $\cdot$ Precision Agriculture $\cdot$ NLP\\[0.2em]
+        \textcolor{Muted}{Target:} Multi-crop India $\cdot$ Web platform deployment\\[0.2em]
+        \textcolor{Muted}{Supervisor:} [Name] $|$ [Department] $|$ [Institution] $|$ 2024--25
+      }
+    \end{column}
+
+    \begin{column}{0.30\textwidth}
+      \vspace{0.8em}
+      \foreach \num/\lbl in {%
+        146M+/{Smallholder farm\\households in India},%
+        {₹1.5L cr}/{Annual crop loss from\\disease \& poor advisory},%
+        {<30\%}/{Farmers with access\\to agronomist advice}%
+      }{%
+        \begin{tcolorbox}[enhanced, colback=MidBg, colframe=MidBg!80,
+          boxrule=0.4pt, arc=3pt, left=4pt, right=4pt, top=3pt, bottom=3pt,
+          before skip=4pt, after skip=4pt]
+          {\color{Accent}\Large\bfseries \num}\\[1pt]
+          {\tiny\color{SlateBlue} \lbl}
+        \end{tcolorbox}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+}
+
+% ── SLIDE 2: INTRODUCTION ─────────────────────────────────
+\begin{frame}{The Agricultural Advisory Crisis in India}
+  \framesubtitle{Why existing systems fail the 146 million farmers who need them most}
+
+  \vspace{-0.4em}
+  \begin{columns}[T]
+    \begin{column}{0.54\textwidth}
+      \begin{itemize}[itemsep=1.2pt, topsep=0.8pt]\footnotesize
+        \item India has \textbf{1 agricultural extension worker per 1{,}000+ farmers} — advice is inaccessible at scale \textcolor{Muted}{(ICAR, 2023)}
+        \item Crop disease is the \textbf{leading cause of yield loss}; most farmers diagnose by eye, often too late \textcolor{Muted}{(FAO, 2022)}
+        \item Soil nutrient deficiencies cost \textbf{20--30\% of potential yield}; soil testing adoption is $<$15\% \textcolor{Muted}{(NABARD, 2023)}
+        \item Mandi price information asymmetry causes farmers to sell \textbf{30--40\% below optimal price} \textcolor{Muted}{(eNAM, 2023)}
+        \item Existing AI tools are \textbf{English-only, text-only}, or require stable internet — excluding most target users
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.44\textwidth}
+      \begin{tcolorbox}[agricard=Purple, title=What AI can offer, before skip=0pt, top=3pt, bottom=3pt]
+        \footnotesize
+        \begin{itemize}[leftmargin=1em, itemsep=0.5pt, topsep=0.5pt]
+          \item[$\rightarrow$] 24/7 voice advisory in Hindi \& regional languages
+          \item[$\rightarrow$] Instant leaf-image disease diagnosis + XAI
+          \item[$\rightarrow$] Soil-sensor-grounded nutrition recommendations
+          \item[$\rightarrow$] Live mandi price advisory with sell/hold guidance
+        \end{itemize}
+      \end{tcolorbox}
+      \vspace{2pt}
+      \begin{tcolorbox}[agricard=Teal, title=Why now?, before skip=0pt, top=3pt, bottom=3pt]
+        \footnotesize
+        \begin{itemize}[leftmargin=1em, itemsep=0.5pt, topsep=0.5pt]
+          \item[$\rightarrow$] LLMs (GPT-4o, Gemini 1.5) ready for domain advisory
+          \item[$\rightarrow$] VLMs achieve $>$90\% on PlantVillage disease datasets
+          \item[$\rightarrow$] Bhashini API enables 10+ Indic language ASR/TTS
+          \item[$\rightarrow$] RAG eliminates hallucination in grounded advisory
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE 3: RELATED WORK ─────────────────────────────────
+\begin{frame}{Landscape of Prior Research}
+  \framesubtitle{Six research streams this thesis builds upon and extends}
+
+  \begin{columns}[T]
+    \begin{column}{0.325\textwidth}
+      \begin{tcolorbox}[agricard=Purple, title=S1 · Multimodal conversational AI, before skip=0pt, after skip=4pt]
+        \tiny MIRAGE (2025) $\cdot$ AgMMU $\cdot$ Farmer.Chat (ACM 2024)\\
+        $\rightarrow$ Benchmarks \& systems; lack unified advisory session
+      \end{tcolorbox}
+      \begin{tcolorbox}[agricard=Coral, title=S3 · VLMs for plant disease, before skip=0pt, after skip=4pt]
+        \tiny LLMI-CDP (Sci.\ Reports 2025) $\cdot$ AgriChain $\cdot$ Self-consistency VLMs\\
+        $\rightarrow$ 91--94\% leaf accuracy; no farmer-facing conversational UI
+      \end{tcolorbox}
+      \begin{tcolorbox}[agricard=Blue, title=S5 · Speech \& multilingual NLP, before skip=0pt]
+        \tiny Indic ASR benchmark (2025) $\cdot$ IndicBERT $\cdot$ Bhashini\\
+        $\rightarrow$ Voice interfaces exist; not connected to advisory backend
+      \end{tcolorbox}
+    \end{column}
+
+    \begin{column}{0.325\textwidth}
+      \begin{tcolorbox}[agricard=Teal, title=S2 · LLMs \& RAG for farm advisory, before skip=0pt, after skip=4pt]
+        \tiny AgroLLM $\cdot$ AgriLLM $\cdot$ J.\ Agri.\ Engineering RAG (2026)\\
+        $\rightarrow$ Strong text-only RAG accuracy; no image or voice modality
+      \end{tcolorbox}
+      \begin{tcolorbox}[agricard=Amber, title=S4 · Explainable AI in agriculture, before skip=0pt, after skip=4pt]
+        \tiny XAI-CROP (Springer NCA 2024) $\cdot$ Grad-CAM plant disease\\
+        $\rightarrow$ XAI per task in isolation; never surfaced to farmers conversationally
+      \end{tcolorbox}
+      \begin{tcolorbox}[agricard=Green, title=S6 · Agentic \& expert systems, before skip=0pt]
+        \tiny CropiBot (Sci.\ Reports 2026) $\cdot$ Transformer survey (EAAI 2024)\\
+        $\rightarrow$ Single-agent chatbots; lack specialist routing \& sensor fusion
+      \end{tcolorbox}
+    \end{column}
+
+    \begin{column}{0.325\textwidth}
+      \begin{tcolorbox}[enhanced, colback=GrayL, colframe=Border,
+        boxrule=0.4pt, arc=3pt, left=5pt, right=5pt, top=5pt, bottom=5pt]
+        \centering
+        \textbf{\color{DarkText}\small Key papers cited}\\[4pt]
+        \footnotesize
+        \begin{tabular}{@{}l@{}}
+          \textcolor{Purple}{$\bullet$}~\cite{mirage2025}\\[2pt]
+          \textcolor{Purple}{$\bullet$}~\cite{agmmu2025}\\[2pt]
+          \textcolor{Teal}{$\bullet$}~\cite{farmerchat2024}\\[2pt]
+          \textcolor{Coral}{$\bullet$}~\cite{llmicdp2025}\\[2pt]
+          \textcolor{Coral}{$\bullet$}~\cite{agrichain2025}\\[2pt]
+          \textcolor{Amber}{$\bullet$}~\cite{xaicrop2024}\\[2pt]
+          \textcolor{Green}{$\bullet$}~\cite{cropibotSSR2026}\\[2pt]
+          \textcolor{Blue}{$\bullet$}~\cite{indicasr2025}\\[2pt]
+          \textcolor{Teal}{$\bullet$}~\cite{ragadvLLM2026}\\[2pt]
+          \textcolor{Muted}{$\bullet$}~\cite{transformersurvey2024}
+        \end{tabular}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE 4: RESEARCH GAP ─────────────────────────────────
+\begin{frame}{What No Existing System Has Built}
+  \framesubtitle{Five specific gaps identified across the literature survey}
+
+  \begin{tcolorbox}[gapbox=Coral, before skip=0pt, after skip=2.5pt]
+    \footnotesize\textbf{\color{Coral}G1 \;} No unified multimodal advisory session\\
+    {\scriptsize\color{Muted} No system combines disease (image) + nutrition (sensor) + crop rec + weather + live market data in one conversational turn}
+  \end{tcolorbox}
+  \begin{tcolorbox}[gapbox=Amber, before skip=0pt, after skip=2.5pt]
+    \footnotesize\textbf{\color{Amber}G2 \;} No cross-modal sensor--image nutrition fusion in a dialogue\\
+    {\scriptsize\color{Muted} Sensor fusion papers work offline; no conversational interface wraps leaf image + soil NPK data for farmer-facing nutrition advice}
+  \end{tcolorbox}
+  \begin{tcolorbox}[gapbox=Green, before skip=0pt, after skip=2.5pt]
+    \footnotesize\textbf{\color{Green}G3 \;} XAI not rendered to the farmer in any deployed system\\
+    {\scriptsize\color{Muted} XAI-CROP~\cite{xaicrop2024} and LLMI-CDP~\cite{llmicdp2025} generate SHAP/Grad-CAM as research output — never surfaced as a visual explanation in a farmer UI}
+  \end{tcolorbox}
+  \begin{tcolorbox}[gapbox=Blue, before skip=0pt, after skip=2.5pt]
+    \footnotesize\textbf{\color{Blue}G4 \;} No end-to-end Indic voice-to-advisory pipeline\\
+    {\scriptsize\color{Muted} Indic ASR benchmark~\cite{indicasr2025} achieves WER 16\% for Hindi but no system connects it to an agronomic RAG backend with TTS response}
+  \end{tcolorbox}
+  \begin{tcolorbox}[gapbox=Purple, before skip=0pt, after skip=0pt]
+    \footnotesize\textbf{\color{Purple}G5 \;} Live mandi price never co-delivered with agronomic advice\\
+    {\scriptsize\color{Muted} Market agents and agronomic agents exist in silos across all surveyed literature — no system answers both in the same conversational response}
+  \end{tcolorbox}
+\end{frame}
+
+% ── SLIDE 5: PROBLEM STATEMENT ────────────────────────────
+\begin{frame}{Formal Problem Statement}
+  \begin{tcolorbox}[psbox, top=4pt, bottom=4pt]
+    \footnotesize Indian smallholder farmers face \textbf{simultaneous, interdependent challenges} --- crop disease, nutrient deficiency, uncertain crop selection, irrigation scheduling, and price realisation --- that no single AI model or modality can address. Existing expert systems are \textbf{text-only, single-agent, single-language, and non-explainable}, making them inaccessible and untrustworthy for the target population. \textbf{No current system} accepts voice in Hindi, diagnoses disease from leaf images, integrates soil sensor data, and advises on live mandi prices within a single conversational turn --- with explanations grounded in verified agronomic knowledge sources.
+  \end{tcolorbox}
+
+  \vspace{0.2em}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \begin{tcolorbox}[agricard=Coral, title=Challenges to overcome, before skip=0pt, top=3pt, bottom=3pt]
+        \scriptsize
+        \begin{itemize}[leftmargin=1.1em, itemsep=0.5pt, topsep=0pt]
+          \item \textbf{Modality heterogeneity} — voice, image, text, sensor, price are structurally different inputs
+          \item \textbf{Domain depth} — agriculture requires expert-level, crop- and region-specific knowledge
+          \item \textbf{Hallucination risk} — LLMs fabricate crop-care advice with dangerous confidence
+          \item \textbf{Language barrier} — Indic ASR accuracy sub-optimal for agricultural vocabulary
+          \item \textbf{Trust} — farmers reject advice they cannot understand or verify
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{tcolorbox}[agricard=Green, title=Solution constraints, before skip=0pt, top=3pt, bottom=3pt]
+        \scriptsize
+        \begin{itemize}[leftmargin=1.1em, itemsep=0.5pt, topsep=0pt]
+          \item Must work on commodity Android device + 3G connection
+          \item Response time $<$4 s (cloud) $\cdot$ $<$8 s (PWA offline)
+          \item Knowledge grounded exclusively in ICAR, FAO, CGIAR verified sources
+          \item Explainability must be farmer-readable — visual, not numerical
+          \item Multi-crop: wheat, rice, maize, cotton, tomato, potato and more
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE 6: OBJECTIVES ───────────────────────────────────
+\begin{frame}{Research Objectives}
+  \framesubtitle{Eight measurable objectives mapping directly to identified research gaps}
+
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \foreach \id/\col/\lbl/\body in {%
+        O1/Purple/Architecture/{Design LangGraph multi-agent orchestrator: intent classifier, parallel dispatch, Redis multi-turn memory},%
+        O2/Coral/Disease/{Fine-tune ViT-L/16 + LoRA on PlantVillage/PlantDoc/IP102 — $>$90\% top-1, 200+ diseases, 50+ crops},%
+        O3/Amber/Nutrition/{Cross-modal MLP fusing ResNet-50 leaf features with NPK/pH/EC sensor readings for fertiliser dose},%
+        O4/Teal/RAG/{Hallucination-resistant RAG: 250k+ ICAR/FAO chunks in Qdrant, hybrid BM25+dense, LLM-as-judge gating}%
+      }{%
+        \begin{tcolorbox}[enhanced, colback=\col!8, colframe=\col, boxrule=0.4pt, arc=2pt,
+          left=4pt, right=4pt, top=2pt, bottom=2pt, before skip=3pt]
+          {\footnotesize\bfseries\color{\col}\id\;·\;\lbl}\;{\tiny\color{Muted}\body}
+        \end{tcolorbox}%
+      }
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \foreach \id/\col/\lbl/\body in {%
+        O5/Green/XAI/{Surface Grad-CAM heatmaps \& SHAP bar charts in React PWA as farmer-facing UI — not research output},%
+        O6/Blue/Voice/{Whisper large-v3 (Indic fine-tuned) ASR → Bhashini TTS — WER $<$20\% Hindi, $<$30\% regional, $<$4 s latency},%
+        O7/GrayC/Market/{Agmarknet + eNAM live pull (15-min), Prophet 7-day forecast, sell/hold advisory co-delivered with agronomy},%
+        O8/Purple/Evaluation/{Benchmark on MIRAGE, AgMMU; validate with 10 ICAR-certified agronomists on 200 real farmer queries}%
+      }{%
+        \begin{tcolorbox}[enhanced, colback=\col!8, colframe=\col, boxrule=0.4pt, arc=2pt,
+          left=4pt, right=4pt, top=2pt, bottom=2pt, before skip=3pt]
+          {\footnotesize\bfseries\color{\col}\id\;·\;\lbl}\;{\tiny\color{Muted}\body}
+        \end{tcolorbox}%
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE 7: APPROACH ─────────────────────────────────────
+\begin{frame}{System Approach --- Six-Layer Architecture}
+  \framesubtitle{Each layer addresses specific research objectives and closes identified gaps}
+
+  \foreach \col/\lbl/\detail in {%
+    Teal/{L1 · Input layer}/{Text $\cdot$ Voice (Whisper ASR) $\cdot$ Image (leaf/field) $\cdot$ Sensor (NPK/pH/EC) $\cdot$ Live price (Agmarknet/eNAM) $\cdot$ 10 Indic languages via Bhashini},%
+    Purple/{L2 · Preprocessing}/{Parallel: ASR $\rightarrow$ Hindi norm $\cdot$ Image QA (BRISQUE) + 448$\times$448 resize $\cdot$ Sensor calibration $\cdot$ Price anomaly filter},%
+    Purple/{L3 · Orchestrator}/{GPT-4o backbone + fine-tuned BERT intent classifier $\cdot$ LangGraph dispatch $\cdot$ Redis session memory $\cdot$ Confidence-gated response merge},%
+    Coral/{L4 · Specialist agents $\times$5}/{\textbf{Disease:} ViT-L LoRA+Grad-CAM $|$ \textbf{Nutrition:} ResNet-50+sensor MLP+SHAP $|$ \textbf{Crop:} XGBoost+SHAP $|$ \textbf{Weather:} LSTM+IMD $|$ \textbf{Market:} Agmarknet+Prophet},%
+    Green/{L5 · Knowledge + RAG}/{E5-large embeddings $\cdot$ Qdrant $\cdot$ Hybrid BM25+dense $\cdot$ Cross-encoder rerank $\cdot$ HyDE $\cdot$ Qwen3 LLM-as-judge $\cdot$ 250k+ ICAR/FAO/CGIAR chunks},%
+    Blue/{L6 · Output + XAI}/{React 18 PWA $\cdot$ Grad-CAM overlay $\cdot$ SHAP bar charts $\cdot$ Bhashini TTS Hindi/regional $\cdot$ District map $\cdot$ Price trend chart $\cdot$ FastAPI WebSocket}%
+  }{%
+    \begin{tcolorbox}[layerrow=\col, before skip=3pt, after skip=0pt,
+      left=4pt, right=4pt, top=2pt, bottom=2pt]
+      \footnotesize
+      \textbf{\color{\col}\lbl}\quad\textcolor{DarkText}{\detail}
+    \end{tcolorbox}%
+  }
+\end{frame}
+
+% ── SLIDE 8: EVALUATION FRAMEWORK ────────────────────────
+\begin{frame}{Evaluation Framework}
+  \framesubtitle{Quantitative metrics per component — each tied to a research objective}
+
+  \begin{columns}[T]
+    \begin{column}{0.325\textwidth}
+      \begin{tcolorbox}[agricard=Coral, title=Disease diagnostic (O2), before skip=0pt, after skip=4pt,
+        fonttitle=\bfseries\footnotesize]
+        \tiny
+        \textbf{Dataset:} PlantVillage test + PlantDoc\\
+        \textbf{Metrics:} Top-1 Acc $\cdot$ F1 macro $\cdot$ AUC-ROC\\
+        \textbf{Target:} $>$90\% top-1 $\cdot$ 200+ diseases\\
+        \textbf{XAI:} Grad-CAM IoU vs.\ expert annotation
+      \end{tcolorbox}
+      \begin{tcolorbox}[agricard=Green, title=Crop recommendation (O4), before skip=0pt,
+        fonttitle=\bfseries\footnotesize]
+        \tiny
+        \textbf{Dataset:} ICRISAT district yield + IMD climate\\
+        \textbf{Metrics:} Top-3 Acc $\cdot$ Agronomist agreement \%\\
+        \textbf{Target:} Top-3 acc $>$85\% $\cdot$ agreement $>$80\%\\
+        \textbf{XAI:} SHAP feature rank correlation
+      \end{tcolorbox}
+    \end{column}
+
+    \begin{column}{0.325\textwidth}
+      \begin{tcolorbox}[agricard=Amber, title=Nutrition agent (O3), before skip=0pt, after skip=4pt,
+        fonttitle=\bfseries\footnotesize]
+        \tiny
+        \textbf{Dataset:} ICAR soil health card DB + synthetic sensor\\
+        \textbf{Metrics:} RMSE fertiliser dose $\cdot$ F1 deficiency class\\
+        \textbf{Target:} RMSE $<$5 kg/ha $\cdot$ F1 $>$0.85\\
+        \textbf{XAI:} SHAP stability score across runs
+      \end{tcolorbox}
+      \begin{tcolorbox}[agricard=Blue, title=ASR / Voice pipeline (O6), before skip=0pt,
+        fonttitle=\bfseries\footnotesize]
+        \tiny
+        \textbf{Dataset:} Indic ASR benchmark (10{,}934 recordings)\\
+        \textbf{Metric:} WER per language\\
+        \textbf{Target:} WER $<$20\% Hindi $\cdot$ $<$30\% Indic\\
+        \textbf{E2E latency:} voice $\rightarrow$ response $<$4 s
+      \end{tcolorbox}
+    \end{column}
+
+    \begin{column}{0.325\textwidth}
+      \begin{tcolorbox}[agricard=Purple, title=RAG quality (O4), before skip=0pt, after skip=4pt,
+        fonttitle=\bfseries\footnotesize]
+        \tiny
+        \textbf{Framework:} RAGAS evaluation suite\\
+        \textbf{Metrics:} Faithfulness $\cdot$ Context relevance $\cdot$ Answer rel.\\
+        \textbf{Target:} Faithfulness $>$0.88 $\cdot$ Hallucination $<$5\%\\
+        \textbf{Benchmarks:} MIRAGE $\cdot$ AgMMU eval sets
+      \end{tcolorbox}
+      \begin{tcolorbox}[agricard=GrayC, title=Expert agronomist panel (O8), before skip=0pt,
+        fonttitle=\bfseries\footnotesize]
+        \tiny
+        \textbf{Panel:} 10 ICAR-certified agronomists\\
+        \textbf{Metric:} 5-point Likert correctness + clarity\\
+        \textbf{Target:} Mean correctness $>$4.0 / 5.0\\
+        \textbf{Blind eval:} 200 real farmer queries
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+
+  \vspace{3pt}
+  {\footnotesize\color{Muted}\itshape Ablation studies: 5-agent vs.\ single-agent baseline $\cdot$ RAG vs.\ no-RAG $\cdot$ XAI rendered vs.\ not $\cdot$ voice vs.\ text-only}
+\end{frame}
+
+% ── SLIDE 9: CONTRIBUTIONS + ROADMAP ─────────────────────
+{
+\setbeamercolor{background canvas}{bg=DarkBg}
+\setbeamercolor{normal text}{fg=white}
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth, ht=1.8em, dp=0.5em]{footline}%
+    \hspace{1em}%
+    {\footnotesize\color{SlateBlue} AgriSys — A Multimodal Agricultural Expert System}%
+    \hfill%
+    {\footnotesize\color{SlateBlue}\insertframenumber\,/\,\inserttotalframenumber}%
+    \hspace{1em}%
+  \end{beamercolorbox}%
+}
+\begin{frame}{Research Contributions \& Timeline}
+  \framesubtitle{Five novel contributions over prior art and a 12-month delivery plan}
+
+  \foreach \id/\title/\sub in {%
+    C1/{First multi-agent system routing to five specialist domain models}/{Closes G1 $\cdot$ novel over: Farmer.Chat, AgroLLM, CropiBot (all single-model)},%
+    C2/{Cross-modal leaf image + soil sensor fusion for nutrition in a dialogue}/{Closes G2 $\cdot$ novel over: all surveyed nutrition papers (offline inference only)},%
+    C3/{Farmer-facing Grad-CAM heatmaps and SHAP charts rendered in web UI}/{Closes G3 $\cdot$ novel over: XAI-CROP~\cite{xaicrop2024}, LLMI-CDP~\cite{llmicdp2025} — both log XAI internally},%
+    C4/{End-to-end Indic voice pipeline: Whisper ASR $\rightarrow$ Hindi RAG $\rightarrow$ Bhashini TTS}/{Closes G4 $\cdot$ novel over: Indic ASR benchmark~\cite{indicasr2025} paper (no advisory backend)},%
+    C5/{Live mandi price co-delivered with agronomic advice in one conversational turn}/{Closes G5 $\cdot$ novel over: all surveyed papers — no prior system attempts this integration}%
+  }{%
+    \begin{tcolorbox}[contribbox, before skip=2.5pt, after skip=0pt]
+      \footnotesize\color{white}\textbf{\color{Accent}\id\quad}\title\\
+      {\tiny\color{SlateBlue}\sub}
+    \end{tcolorbox}%
+  }
+
+  \vspace{4pt}
+  \begin{columns}[T]
+    \foreach \phase/\detail in {%
+      {M1--3}/{Data collection · KB · RAG},%
+      {M4--6}/{Training · Fusion · ASR},%
+      {M7--9}/{Orchestrator · PWA · QA},%
+      {M10--12}/{Eval · Panel · Thesis}%
+    }{%
+      \begin{column}{0.24\textwidth}
+        \begin{tcolorbox}[enhanced, colback=MidBg, colframe=MidBg!80, boxrule=0.4pt,
+          arc=3pt, left=4pt, right=4pt, top=2.5pt, bottom=2.5pt]
+          \centering
+          {\small\bfseries\color{Accent}\phase}\\[1pt]
+          {\tiny\color{SlateBlue}\detail}
+        \end{tcolorbox}
+      \end{column}%
+    }
+  \end{columns}
+\end{frame}
+}
+
+% ── SLIDE 10: REFERENCES ──────────────────────────────────
+\begin{frame}[allowframebreaks]{References}
+  \framesubtitle{Key papers cited in this research}
+  
+  \begin{thebibliography}{15}
+    \footnotesize
+    \bibitem{mirage2025} MIRAGE: A Benchmark for Multimodal Information-Seeking and Reasoning in Agricultural Expert-Guided Conversations. arXiv, 2025.
+    \bibitem{multimodalplots2025} A Multimodal Conversational Assistant for Agricultural Plots from Geospatial Open Data. arXiv, 2025.
+    \bibitem{agmmu2025} AgMMU: Agricultural Multimodal Understanding and Reasoning Benchmark. arXiv, April 2025.
+    \bibitem{farmerchat2024} Farmer.Chat: Scaling AI-Powered Agricultural Services for Smallholder Farmers. ACM, 2024. arXiv:2409.08916.
+    \bibitem{llmicdp2025} LLMI-CDP: A Large Language Model for Multimodal Identification of Crop Diseases and Pests. Scientific Reports (Nature), 2025.
+    \bibitem{agrichain2025} AgriChain: Visually-Grounded Expert-Verified Reasoning for Agricultural VLMs. arXiv, 2025.
+    \bibitem{xaicrop2024} Enhancing Crop Recommendation with XAI (XAI-CROP). Neural Computing and Applications, Springer, 2024.
+    \bibitem{ragadvLLM2026} RAG-Based LLM Advisory Framework for Farmers. Journal of Agricultural Engineering, 2026.
+    \bibitem{cropibotSSR2026} Agentic AI-Driven Autonomous Decision Support System for Smart Agriculture (CropiBot). Scientific Reports, 2026.
+    \bibitem{indicasr2025} Benchmarking ASR for Indian Languages in Agricultural Contexts. arXiv, 2025.
+    \bibitem{harnessing2025} Harnessing Large Vision and Language Models in Agriculture: A Review. Frontiers in Plant Science, 2025.
+    \bibitem{transformersurvey2024} Recent Advances in Transformer Technology for Agriculture: A Survey. Engineering Applications of AI, Elsevier, 2024.
+    \bibitem{selfconsistency2025} Self-Consistency in VLMs for Precision Agriculture. arXiv, 2025.
+    \bibitem{overcoming2024} Overcoming LLM Challenges using RAG-Driven Precision in Coffee Leaf Disease Remediation. IEEE Conference, 2024.
+    \bibitem{deeplearning2025} Deep Learning and Computer Vision in Plant Disease Detection. Artificial Intelligence Review, Springer, 2025.
+  \end{thebibliography}
+\end{frame}
+
+\end{document}

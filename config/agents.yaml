@@ -1,0 +1,40 @@
+# config/agents.yaml — Agent Configuration & Feature Flags
+
+agents:
+  disease:
+    enabled: true
+    confidence_threshold: 0.70
+    gradcam_target_layer: "layer4"
+    ensemble_weights:
+      vit: 0.35
+      swin: 0.35
+      convnext: 0.30
+
+  crop:
+    enabled: true
+    top_k: 3
+    model_path: "models/crop_xgb.json"
+
+  nutrition:
+    enabled: true
+    confidence_threshold: 0.65
+
+  weather:
+    enabled: true
+    cache_ttl_seconds: 3600
+    lstm_fallback_enabled: true
+
+  market:
+    enabled: true
+    forecast_days: 7
+    mandi_search_radius_km: 50.0
+
+  diagram:
+    enabled: true
+    output_format: "mermaid"
+
+  web_search:
+    enabled: true
+    max_results: 5
+    region: "in-en"
+    safesearch: "moderate"

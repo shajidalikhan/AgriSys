@@ -1,0 +1,65 @@
+[
+  {
+    "title": "ICAR Package of Practices: Tomato Early and Late Blight Management",
+    "crop": "tomato",
+    "state": "UP",
+    "domain": "disease",
+    "source": "icar",
+    "language": "en",
+    "content": "ICAR Advisory on Tomato Blight: Early blight is caused by Alternaria solani, characterized by dark brown concentric rings (target board spots) on older leaves. For control, spray Mancozeb 75 WP at 2.0g per liter or Chlorothalonil 75 WP at 2.0g per liter at first appearance of symptoms. Late blight is caused by Phytophthora infestans, causing water-soaked pale green lesions that rapidly enlarge into dark brown dead tissue with white fungal growth on leaf undersides in humid conditions. Recommended chemical management: spray Metalaxyl 8% + Mancozeb 64% WP (Ridomil MZ) at 2.5g per liter water or Cymoxanil 8% + Mancozeb 64% WP at 2.5g per liter. Maintain proper plant spacing (60x45 cm) and avoid furrow flood irrigation to reduce leaf wetness."
+  },
+  {
+    "title": "ICAR Guidelines: Wheat Rust and Blast Disease Control in Northern Plains",
+    "crop": "wheat",
+    "state": "Punjab",
+    "domain": "disease",
+    "source": "icar",
+    "language": "en",
+    "content": "Wheat Disease Advisory: Yellow rust (Puccinia striiformis) appears as bright yellow pustules arranged in linear stripes on leaf blades, primarily during cool humid weather in Punjab, Haryana, and Western UP. At initial infection foci, immediately spray Propiconazole 25 EC (Tilt) at 0.1% (1 ml/liter of water) or Tebuconazole 250 EC at 1 ml/liter. Brown rust (Puccinia triticina) produces scattered orange-brown pustules. Spray Mancozeb 75 WP at 2.5 kg/ha in 750 liters water. For spot blotch (Bipolaris sorokiniana), apply Azoxystrobin 18.2% + Difenoconazole 11.4% SC at 1 ml per liter."
+  },
+  {
+    "title": "ICAR Rice Blast and Brown Planthopper Management Protocol",
+    "crop": "rice",
+    "state": "AP",
+    "domain": "disease",
+    "source": "icar",
+    "language": "en",
+    "content": "Rice Pest and Disease Protocol: Rice blast (Magnaporthe oryzae) manifests as spindle-shaped lesions with grey or white centers and brown margins on leaves and node neck blast. Control by spraying Tricyclazole 75 WP at 0.6g/liter or Isoprothiolane 40 EC at 1.5 ml/liter. Brown Planthopper (BPH - Nilaparvata lugens) causes 'hopper burn' with circular patches of drying plants. Drain standing water from the field for 3-4 days (alternate wetting and drying). If nymph count exceeds 1-2 per tiller, spray Pymetrozine 50 WG at 0.6g/liter or Triflumezopyrim 10 SC at 0.5 ml/liter directing spray nozzle towards the base of plant tillers."
+  },
+  {
+    "title": "ICAR Advisory: Potato Late Blight and Black Scurf",
+    "crop": "potato",
+    "state": "UP",
+    "domain": "disease",
+    "source": "icar",
+    "language": "en",
+    "content": "Potato Disease Management: Late blight (Phytophthora infestans) is the most destructive disease in the Indo-Gangetic plains. As a preventive spray when weather is cool and relative humidity >85%, apply Mancozeb 75 WP at 2.5 kg/ha. Upon initial symptom detection, apply systemic fungicide Dimethomorph 50 WP (1g/l) + Mancozeb (2g/l) or Fenamidone 10% + Mancozeb 50% WG at 2.5g/l. Repeat after 7-10 days if foggy conditions persist. For Black Scurf (Rhizoctonia solani), treat seed tubers with Pencycuron 250 SC at 2 ml/kg seed before sowing."
+  },
+  {
+    "title": "ICAR Soil Health Card (SHC) Fertilizer Recommendations for Tomato",
+    "crop": "tomato",
+    "state": "UP",
+    "domain": "nutrition",
+    "source": "icar",
+    "language": "en",
+    "content": "Tomato Nutrient Management Norms: Recommended standard NPK dosage is 120:80:80 kg/ha. Apply 50% Nitrogen and 100% Phosphorus and Potassium as basal dose during field preparation. Top-dress remaining 50% Nitrogen in two equal splits at 30 and 45 days after transplanting. For zinc deficiency (interveinal chlorosis and reduced leaf size), foliar spray Zinc Sulphate (0.5%) neutralized with lime. For calcium deficiency leading to Blossom End Rot (black sunken spots on fruit base), apply gypsum at 250 kg/ha or foliar spray Calcium Nitrate at 5g/liter during fruit setting."
+  },
+  {
+    "title": "CACP MSP and Mandi Grading Norms for Rabi Season",
+    "crop": "wheat",
+    "state": "UP",
+    "domain": "market",
+    "source": "agmarknet",
+    "language": "en",
+    "content": "Wheat Marketing and MSP Advisory: The Minimum Support Price (MSP) for FAQ (Fair Average Quality) wheat for the current marketing season is fixed at Rs 2,275 per quintal. Mandi quality parameters require maximum moisture content of 12.0%, foreign matter not exceeding 0.75%, other food grains under 2.0%, and damaged grains under 2.0%. Clean and dry produce on tarpaulin before bringing to mandi to avoid deductions and secure premium rates over MSP in major APMC mandis."
+  },
+  {
+    "title": "भारतीय कृषि अनुसंधान परिषद (ICAR): टमाटर और गेहूं में फसल रोग नियंत्रण निर्देश",
+    "crop": "टमाटर",
+    "state": "UP",
+    "domain": "disease",
+    "source": "icar",
+    "language": "hi",
+    "content": "टमाटर और गेहूं रोग नियंत्रण परामर्श: टमाटर में अगेती झुलसा (Early Blight) रोग के नियंत्रण के लिए मैंकोजेब (Mancozeb 75 WP) 2 ग्राम प्रति लीटर पानी में मिलाकर छिड़काव करें। पछेती झुलसा (Late Blight) के लक्षण दिखने पर मेटालैक्सिल + मैंकोजेब (Ridomil MZ) 2.5 ग्राम प्रति लीटर की दर से 10 दिन के अंतराल पर छिड़कें। गेहूं में पीला रतुआ (Yellow Rust) दिखने पर प्रोपिकोनाजोल 25 ईसी (Tilt) 1 मिलीलीटर प्रति लीटर पानी में मिलाकर छिड़काव तुरंत करें।"
+  }
+]

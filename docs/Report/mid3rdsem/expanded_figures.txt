@@ -1,0 +1,448 @@
+% ==============================================================================
+% AgriSys Expanded Figures (Recovered from figurechat.txt)
+% ==============================================================================
+% INSTRUCTIONS FOR USE:
+% 1. Preamble Requirements:
+%    Ensure your LaTeX preamble has the following TikZ libraries and macros:
+%
+%    \usetikzlibrary{shapes,arrows.meta,positioning,fit,backgrounds,shadows,calc}
+%    \newcommand{\subcard}[3]{%
+%      \fcolorbox{#1!50}{white}{%
+%        \begin{minipage}[t]{#2}
+%          \raggedright
+%          #3
+%        \end{minipage}%
+%      }%
+%    }
+%
+% 2. Figure 1 replaces the figure in Section: "Five-Layer Conceptual Architecture"
+% 3. Figure 2 replaces the figure in Section: "Concrete Implementation Architecture"
+% ==============================================================================
+
+
+% ==============================================================================
+% REQUIRED PREAMBLE DEFINITIONS (Add to preamble before \begin{document} if not present)
+% ==============================================================================
+\newcommand{\subcard}[3]{%
+  \fcolorbox{#1!50}{white}{%
+    \begin{minipage}[t]{#2}
+      \raggedright
+      #3
+    \end{minipage}%
+  }%
+}
+
+
+% ==============================================================================
+% FIGURE 1: AgriSys Five-Tier Conceptual Architecture with Specialist Agent Layer
+% (Paste into Section: \subsection{Five-Layer Conceptual Architecture})
+% ==============================================================================
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  layer/.style={
+    rounded corners=5pt,
+    text width=14.4cm,
+    align=center,
+    font=\small\sffamily,
+    inner sep=6pt,
+    minimum height=1.35cm,
+    drop shadow={opacity=0.06, shadow xshift=1pt, shadow yshift=-1.5pt}
+  },
+  agent/.style={
+    rounded corners=4pt,
+    text width=1.84cm,
+    align=center,
+    font=\fontsize{6.8}{8.2}\selectfont\sffamily,
+    inner sep=3pt,
+    minimum height=2.15cm,
+    drop shadow={opacity=0.05, shadow xshift=0.8pt, shadow yshift=-1.2pt}
+  }
+]
+
+% ---- Tier 1: Client ----
+\node[layer, draw=secondaryBlue!85, fill=secondaryBlue!8] (t1) {%
+  {\bfseries\color{primaryBlue!90!black} Tier 1 --- Client Presentation Layer}\quad\textcolor{gray!70!black}{(React 18 PWA + Vite 5)}\\[3pt]
+  {\footnotesize\sffamily\color{black!80}
+    Voice Studio (PCM Waveform Visualiser) \textperiodcentered{}
+    Disease Panel (Grad-CAM~\cite{gradcam2017} Canvas Overlay) \textperiodcentered{}
+    Nutrition Panel (SHC Sliders)\\[2pt]
+    Market Intelligence Panel (Recharts Forecasts) \textperiodcentered{}
+    Weather Advisory Panel \textperiodcentered{}
+    Mermaid Diagram Viewer\\[2pt]
+    Bilingual Adaptive UI (English, Hindi, Marathi, Telugu, Tamil)
+  }%
+};
+
+% ---- Tier 2: API Gateway ----
+\node[layer, below=0.55cm of t1, draw=primaryBlue!80, fill=primaryBlue!6] (t2) {%
+  {\bfseries\color{primaryBlue!90!black} Tier 2 --- API Gateway \& Transport Layer}\quad\textcolor{gray!70!black}{(FastAPI 0.115 + Uvicorn ASGI)}\\[3pt]
+  {\footnotesize\sffamily\color{black!80}
+    Bidirectional WebSocket \texttt{/ws/chat} \textperiodcentered{}
+    Binary Voice Stream Ingestion \textperiodcentered{}
+    Token-Streaming SSE \textperiodcentered{}
+    OpenAPI REST Schemas\\[2pt]
+    Token-Bucket Rate Limiter \textperiodcentered{}
+    Sub-850\,ms Time-to-First-Token (TTFT) \textperiodcentered{}
+    JWT Authentication \& CORS Guards
+  }%
+};
+
+% ---- Tier 3: Orchestration ----
+\node[layer, below=0.55cm of t2, draw=purple!65!black, fill=purple!5] (t3) {%
+  {\bfseries\color{purple!75!black} Tier 3 --- Cognitive Orchestration Layer}\quad\textcolor{gray!70!black}{(LangGraph StateGraph Engine~\cite{langgraph2026})}\\[3pt]
+  {\footnotesize\sffamily\color{black!80}
+    \texttt{AgriSysState} TypedDict Central Accumulator \textperiodcentered{}
+    Semantic Intent Router (7-class Classifier)\\[2pt]
+    Dynamic Parallel Fan-out to Domain Agents \textperiodcentered{}
+    \texttt{ResponseMerger} Multi-Agent Synthesiser\\[2pt]
+    Multi-turn Conversational Session Memory (Redis) \textperiodcentered{}
+    Circuit-Breaker Exception Handler
+  }%
+};
+
+% ---- Tier 4 Header Bar ----
+\node[rounded corners=4pt, text width=14.4cm, below=0.55cm of t3,
+      draw=primaryBlue!65, fill=primaryBlue!7, align=center, inner sep=4pt] (t4hdr) {%
+  {\small\bfseries\sffamily\color{primaryBlue!90!black} Tier 4 --- Specialist Domain Agent Layer (7 Autonomous Micro-Agents)}%
+};
+
+% ---- Tier 4: Specialist Agents ----
+\node[agent, below=0.35cm of t4hdr, xshift=-5.82cm,
+      draw=orange!80!black, fill=orange!8] (a1) {%
+  {\bfseries\color{orange!90!black} Disease\\Diagnostic}\\[2pt]
+  ViT-L/16 + Swin-B\\
+  + ConvNeXt~\cite{vit2021}\\[2pt]
+  Grad-CAM Map~\cite{gradcam2017}\\
+  Severity [0--5]
+};
+\node[agent, right=0.18cm of a1, draw=green!70!black, fill=green!7] (a2) {%
+  {\bfseries\color{green!80!black} Crop\\Recommend.}\\[2pt]
+  XGBoost~\cite{xgboost2016} + RF\\
+  Ensemble Model\\[2pt]
+  SHAP XAI~\cite{shap2017}\\
+  What-If Engine
+};
+\node[agent, right=0.18cm of a2, draw=yellow!80!black, fill=yellow!12] (a3) {%
+  {\bfseries\color{yellow!80!black} Nutrition\\Fusion}\\[2pt]
+  ResNet-50~\cite{he2016deep} +\\
+  Sensor MLP\\[2pt]
+  ICAR SHC Rules\\
+  NPK Matrix
+};
+\node[agent, right=0.18cm of a3, draw=cyan!75!black, fill=cyan!7] (a4) {%
+  {\bfseries\color{cyan!80!black} Market\\Intelligence}\\[2pt]
+  eNAM Mandis~\cite{enam2023}\\
+  + Prophet TS~\cite{prophet2018}\\[2pt]
+  Haversine 50\,km\\
+  MSP Advisory
+};
+\node[agent, right=0.18cm of a4, draw=purple!70!black, fill=purple!6] (a5) {%
+  {\bfseries\color{purple!80!black} Weather\\Advisory}\\[2pt]
+  IMD + Open-Meteo\\
+  LSTM Forecast\\[2pt]
+  FAO-56 $\mathrm{ET}_0$~\cite{fao56penman1998}\\
+  Hazard Alerts
+};
+\node[agent, right=0.18cm of a5, draw=teal!75!black, fill=teal!7] (a6) {%
+  {\bfseries\color{teal!80!black} Diagram\\Agent}\\[2pt]
+  Mermaid Engine\\
+  SVG Schematics\\[2pt]
+  Self-Healing\\
+  Syntax Linter
+};
+\node[agent, right=0.18cm of a6, draw=blue!75!black, fill=blue!7] (a7) {%
+  {\bfseries\color{blue!80!black} Indic Voice\\Pipeline}\\[2pt]
+  Whisper~\cite{whisper2022}\\
+  + Bhashini~\cite{bhashini2023}\\[2pt]
+  9 Indic Langs\\
+  $< 1.5$\,s Latency
+};
+
+% Container box around agents
+\begin{scope}[on background layer]
+  \node[draw=primaryBlue!40, fill=primaryBlue!2, rounded corners=5pt, inner sep=4pt,
+        fit=(a1)(a7)] (agbox) {};
+\end{scope}
+
+% ---- Tier 5: Knowledge / Data ----
+\node[layer, below=0.75cm of agbox, draw=darkGreen!85, fill=darkGreen!6] (t5) {%
+  {\bfseries\color{darkGreen!85!black} Tier 5 --- Knowledge Grounding, Storage \& Provider Layer}\quad\textcolor{gray!70!black}{(DIP Factory Architecture)}\\[3pt]
+  {\footnotesize\sffamily\color{black!80}
+    Qdrant Vector DB~\cite{qdrant2023} (1024-d Cosine HNSW) \textperiodcentered{}
+    BM25~\cite{robertson2009probabilistic} Sparse Inverted Index \textperiodcentered{}
+    HyDE~\cite{hyde2022} + RRF Fusion~\cite{rag2020}\\[2pt]
+    Cross-Encoder Reranker \textperiodcentered{}
+    HallucinationGuard (LLM-as-Judge Faithfulness $\ge 0.70$)\\[2pt]
+    Redis State Cache \textperiodcentered{} PostgreSQL DB \textperiodcentered{} MinIO Object Store \textperiodcentered{} Langfuse Tracing\\[2pt]
+    Pluggable DIP Providers: Gemini 3.8 Flash $|$ GPT-4o $|$ Groq Llama 3.3 70B $|$ Ollama (Local)
+  }%
+};
+
+% ---- Arrows ----
+\draw[-{Latex[length=2.5mm,width=1.6mm]}, thick, primaryBlue!80] (t1) -- (t2)
+  node[midway, right=3pt, font=\scriptsize\sffamily\bfseries, color=primaryBlue!80] {WebSocket / REST};
+\draw[-{Latex[length=2.5mm,width=1.6mm]}, thick, primaryBlue!80] (t2) -- (t3)
+  node[midway, right=3pt, font=\scriptsize\sffamily\bfseries, color=primaryBlue!80] {Parsed Request};
+\draw[-{Latex[length=2.5mm,width=1.6mm]}, thick, purple!75!black] (t3) -- (t4hdr)
+  node[midway, right=3pt, font=\scriptsize\sffamily\bfseries, color=purple!80!black] {State Fan-Out};
+
+% Clean distribution from t4hdr to agents
+\foreach \ag in {a1,a2,a3,a4,a5,a6,a7}{
+  \draw[-{Latex[length=1.8mm,width=1.3mm]}, thick, purple!70!black] (\ag.north |- t4hdr.south) -- (\ag.north);
+}
+
+% Clean bus fan-in from Agents to T5
+\coordinate (t5bus) at ([yshift=0.35cm]t5.north);
+\draw[-{Latex[length=2.5mm,width=1.6mm]}, thick, darkGreen!80] (t5bus) -- (t5.north);
+\foreach \ag in {a1,a2,a3,a4,a5,a6,a7}{
+  \draw[thick, darkGreen!75] (\ag.south) |- (t5bus);
+}
+
+% Side RAG bidirectional loop on left side to avoid collision
+\coordinate (ragtop) at ([xshift=-0.20cm]t3.west);
+\coordinate (ragbot) at ([xshift=-0.20cm]t5.west);
+\draw[{Latex[length=1.8mm]}-{Latex[length=1.8mm]}, thick, gray!60, dashed]
+  (t3.west) -- (ragtop) -- (ragbot)
+  node[midway, fill=white, inner sep=1.5pt, rotate=90, font=\fontsize{6.2}{7.4}\selectfont\sffamily\bfseries, text=gray!75!black] {RAG Context}
+  -- (t5.west);
+
+\end{tikzpicture}
+\caption{AgriSys Five-Tier Conceptual Architecture with Specialist Agent Layer}
+\label{fig:conceptual_arch}
+\end{figure}
+
+
+% ==============================================================================
+% FIGURE 2: AgriSys Concrete Five-Tier Implementation Architecture with Technology Stack
+% (Paste into Section: \subsection{Concrete Implementation Architecture})
+% ==============================================================================
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  tier/.style={
+    rounded corners=5pt,
+    text width=14.4cm,
+    align=center,
+    inner sep=5pt,
+    drop shadow={opacity=0.06, shadow xshift=1pt, shadow yshift=-1.5pt}
+  },
+  arrowlabel/.style={
+    fill=white,
+    inner sep=2pt,
+    font=\fontsize{6.5}{7.5}\selectfont\sffamily\bfseries,
+    drop shadow={opacity=0}
+  }
+]
+
+% ==================== TIER 1: CLIENT ====================
+\node[tier, draw=secondaryBlue!85, fill=secondaryBlue!6] (T1) {%
+  \begin{minipage}{14.2cm}
+    \raggedright
+    {\small\bfseries\sffamily\color{primaryBlue!90!black} Tier 1: Client Application Tier}\hfill{\scriptsize\sffamily\color{gray!70!black} React 18 + Vite 5 PWA \textbullet{} Node 22 / TypeScript 5.4}\\[3pt]
+    \subcard{secondaryBlue}{4.45cm}{%
+      {\fontsize{7}{8.2}\selectfont\bfseries\color{primaryBlue} Streaming \& Voice UI}\\[2pt]
+      {\fontsize{6.2}{7.4}\selectfont\sffamily\color{black!80}
+      \textbullet{} \texttt{StreamingChat}: WS token-by-token\\
+      \textbullet{} \texttt{VoiceStudio}: 16\,kHz WebAudio\\
+      \textbullet{} PCM waveform canvas visualizer\\
+      \textbullet{} Bilingual mic recording / playback}
+    }\hfill
+    \subcard{secondaryBlue}{4.45cm}{%
+      {\fontsize{7}{8.2}\selectfont\bfseries\color{primaryBlue} Specialist Farmer Panels}\\[2pt]
+      {\fontsize{6.2}{7.4}\selectfont\sffamily\color{black!80}
+      \textbullet{} \texttt{DiseasePanel}: Grad-CAM~\cite{gradcam2017} overlay\\
+      \textbullet{} \texttt{NutritionPanel}: SHC slider inputs\\
+      \textbullet{} \texttt{MarketPanel}: Recharts 7-d trends\\
+      \textbullet{} \texttt{WeatherPanel}: IMD alert banners}
+    }\hfill
+    \subcard{secondaryBlue}{4.45cm}{%
+      {\fontsize{7}{8.2}\selectfont\bfseries\color{primaryBlue} Client Core \& Localization}\\[2pt]
+      {\fontsize{6.2}{7.4}\selectfont\sffamily\color{black!80}
+      \textbullet{} \texttt{LanguageContext}: EN/HI/MR/TE/TA\\
+      \textbullet{} PWA Service Worker offline cache\\
+      \textbullet{} SVG / Mermaid diagram renderer\\
+      \textbullet{} Tailored responsive mobile layout}
+    }
+  \end{minipage}
+};
+
+% ==================== TIER 2: GATEWAY ====================
+\node[tier, below=0.48cm of T1, draw=primaryBlue!80, fill=primaryBlue!5] (T2) {%
+  \begin{minipage}{14.2cm}
+    \raggedright
+    {\small\bfseries\sffamily\color{primaryBlue!90!black} Tier 2: API Gateway \& Transport Layer}\hfill{\scriptsize\sffamily\color{gray!70!black} FastAPI 0.115 + Uvicorn ASGI on Python 3.12}\\[3pt]
+    \subcard{primaryBlue}{4.45cm}{%
+      {\fontsize{7}{8.2}\selectfont\bfseries\color{primaryBlue} Ingress Protocol Routers}\\[2pt]
+      {\fontsize{6.2}{7.4}\selectfont\sffamily\color{black!80}
+      \textbullet{} \texttt{/ws/chat}: Full-duplex WebSocket\\
+      \textbullet{} \texttt{/api/v1/voice/stream}: PCM upload\\
+      \textbullet{} \texttt{/api/v1/ingest}: Multimodal RAG\\
+      \textbullet{} \texttt{/health} \& \texttt{/ready}: Probe checks}
+    }\hfill
+    \subcard{primaryBlue}{4.45cm}{%
+      {\fontsize{7}{8.2}\selectfont\bfseries\color{primaryBlue} Security \& Traffic Control}\\[2pt]
+      {\fontsize{6.2}{7.4}\selectfont\sffamily\color{black!80}
+      \textbullet{} JWT Bearer token authentication\\
+      \textbullet{} Sliding-window token rate limiter\\
+      \textbullet{} CORS origin security middleware\\
+      \textbullet{} Strict Pydantic v2 schema validation}
+    }\hfill
+    \subcard{primaryBlue}{4.45cm}{%
+      {\fontsize{7}{8.2}\selectfont\bfseries\color{primaryBlue} Telemetry \& Dispatch}\\[2pt]
+      {\fontsize{6.2}{7.4}\selectfont\sffamily\color{black!80}
+      \textbullet{} Langfuse trace context propagation\\
+      \textbullet{} Prometheus \texttt{/metrics} exporter\\
+      \textbullet{} Sub-850\,ms TTFT async pipeline\\
+      \textbullet{} Graceful timeout \& circuit breaker}
+    }
+  \end{minipage}
+};
+
+% ==================== TIER 3: ORCHESTRATION ====================
+\node[tier, below=0.48cm of T2, draw=purple!65!black, fill=purple!4] (T3) {%
+  \begin{minipage}{14.2cm}
+    \raggedright
+    {\small\bfseries\sffamily\color{purple!75!black} Tier 3: Cognitive Orchestration \& Agent Execution Tier}\hfill{\scriptsize\sffamily\color{gray!70!black} LangGraph~\cite{langgraph2026} StateGraph Engine}\\[3pt]
+    \fcolorbox{purple!40}{white}{%
+      \begin{minipage}{14.05cm}
+        \centering\fontsize{6.8}{8}\selectfont\sffamily
+        {\bfseries\color{purple!80!black} Semantic Intent Router} (7-class Zero-Shot Embeddings) \quad $\boldsymbol{\longrightarrow}$ \quad {\bfseries\color{purple!80!black} AgriSysState} (TypedDict State Accumulator)
+      \end{minipage}%
+    }\\[3pt]
+    \subcard{purple}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{purple!80!black} Disease Diagnostic}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} ViT-L/16 + Swin-B\\
+      \textbullet{} ConvNeXt~\cite{vit2021} Ensemble\\
+      \textbullet{} Grad-CAM~\cite{gradcam2017} Heatmap\\
+      \textbullet{} Severity Score [0--5]}
+    }\hfill
+    \subcard{purple}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{purple!80!black} Crop \& Nutrition}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} XGBoost~\cite{xgboost2016} + RF Trees\\
+      \textbullet{} SHAP~\cite{shap2017} Local Explainer\\
+      \textbullet{} ResNet-50~\cite{he2016deep} + Soil MLP\\
+      \textbullet{} ICAR SHC Rule Engine}
+    }\hfill
+    \subcard{purple}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{purple!80!black} Market \& Weather}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} eNAM Mandis~\cite{enam2023} ($r\le 50$\,km)\\
+      \textbullet{} Prophet~\cite{prophet2018} 7-day TS\\
+      \textbullet{} IMD Gridded Forecast\\
+      \textbullet{} FAO-56 $\mathrm{ET}_0$~\cite{fao56penman1998} Penman}
+    }\hfill
+    \subcard{purple}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{purple!80!black} Diagram \& Voice}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} Mermaid AST Generator\\
+      \textbullet{} Self-Healing Syntax\\
+      \textbullet{} Whisper~\cite{whisper2022} ASR\\
+      \textbullet{} Bhashini~\cite{bhashini2023} Indic TTS}
+    }\\[3pt]
+    \fcolorbox{purple!40}{white}{%
+      \begin{minipage}{14.05cm}
+        \centering\fontsize{6.8}{8}\selectfont\sffamily
+        {\bfseries\color{purple!80!black} ResponseMerger} (Cross-Agent Synthesis) \quad $\boldsymbol{\longleftrightarrow}$ \quad {\bfseries\color{purple!80!black} HallucinationGuard} (LLM-as-Judge $\ge 0.70$ Faithfulness)
+      \end{minipage}%
+    }
+  \end{minipage}
+};
+
+% ==================== TIER 4: PROVIDERS ====================
+\node[tier, below=0.48cm of T3, draw=warningOrange!80, fill=warningOrange!4] (T4) {%
+  \begin{minipage}{14.2cm}
+    \raggedright
+    {\small\bfseries\sffamily\color{warningOrange!85!black} Tier 4: Model Runtime \& Provider Layer}\hfill{\scriptsize\sffamily\color{gray!70!black} DIP Factory Registry Pattern}\\[3pt]
+    \subcard{warningOrange}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{warningOrange!90!black} GeminiProvider}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} Gemini 3.8 Flash (Primary)\\
+      \textbullet{} Vision leaf inspection\\
+      \textbullet{} Chain-of-Thought reasoning}
+    }\hfill
+    \subcard{warningOrange}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{warningOrange!90!black} GroqProvider}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} Llama 3.3 70B Versatile\\
+      \textbullet{} Ultra-fast token streaming\\
+      \textbullet{} Low-latency turns}
+    }\hfill
+    \subcard{warningOrange}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{warningOrange!90!black} OpenAIProvider}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} GPT-4o (Fallback / Judge)\\
+      \textbullet{} Hallucination verification\\
+      \textbullet{} Strict JSON schema mode}
+    }\hfill
+    \subcard{warningOrange}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{warningOrange!90!black} Local / Embeddings}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} Ollama (Mistral/DeepSeek)\\
+      \textbullet{} multilingual-e5-large\\
+      \textbullet{} 1024-d Dense vectors}
+    }
+  \end{minipage}
+};
+
+% ==================== TIER 5: DATA / DEVOPS ====================
+\node[tier, below=0.48cm of T4, draw=darkGreen!85, fill=darkGreen!5] (T5) {%
+  \begin{minipage}{14.2cm}
+    \raggedright
+    {\small\bfseries\sffamily\color{darkGreen!85!black} Tier 5: Data Storage, Grounding \& Observability Tier}\hfill{\scriptsize\sffamily\color{gray!70!black} Docker Compose 9-Service Stack}\\[3pt]
+    \subcard{darkGreen}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{darkGreen!90!black} Vector \& Search :6333}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} Qdrant~\cite{qdrant2023} (Cosine HNSW)\\
+      \textbullet{} BM25~\cite{robertson2009probabilistic} Sparse Index\\
+      \textbullet{} HyDE~\cite{hyde2022} + RRF~\cite{rag2020} Hybrid RAG\\
+      \textbullet{} Cross-Encoder Reranker}
+    }\hfill
+    \subcard{darkGreen}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{darkGreen!90!black} State \& Cache :6379}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} Redis Multi-turn Store\\
+      \textbullet{} 900\,s TTL session state\\
+      \textbullet{} Token rate-limit counter\\
+      \textbullet{} Pub/Sub agent event bus}
+    }\hfill
+    \subcard{darkGreen}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{darkGreen!90!black} DB \& Objects :5432/:9000}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} PostgreSQL: Structured logs\\
+      \textbullet{} Farmer profile \& soil records\\
+      \textbullet{} MinIO S3: Leaf image blobs\\
+      \textbullet{} Ingested ICAR/FAO PDFs}
+    }\hfill
+    \subcard{darkGreen}{3.25cm}{%
+      {\fontsize{6.8}{7.8}\selectfont\bfseries\color{darkGreen!90!black} Observability \& CI}\\[2pt]
+      {\fontsize{5.8}{7}\selectfont\sffamily\color{black!80}
+      \textbullet{} Langfuse (:3000) traces\\
+      \textbullet{} Prometheus (:9090) metrics\\
+      \textbullet{} Grafana (:3001) dashboards\\
+      \textbullet{} GitHub Actions CI/CD}
+    }
+  \end{minipage}
+};
+
+% ==================== INTER-TIER ARROWS ====================
+\draw[-{Latex[length=2.5mm,width=1.8mm]}, very thick, primaryBlue!80] (T1.south) -- (T2.north)
+  node[midway, arrowlabel, text=primaryBlue!85!black] {Bidirectional WebSocket \texttt{/ws/chat} \textbullet{} REST HTTP/2};
+
+\draw[-{Latex[length=2.5mm,width=1.8mm]}, very thick, primaryBlue!80] (T2.south) -- (T3.north)
+  node[midway, arrowlabel, text=primaryBlue!85!black] {Structured \texttt{AgriRequest} \textbullet{} Session Context};
+
+\draw[-{Latex[length=2.5mm,width=1.8mm]}, very thick, purple!75!black] (T3.south) -- (T4.north)
+  node[midway, arrowlabel, text=purple!85!black] {Unified DIP Interface: \texttt{complete()} / \texttt{stream()} / \texttt{embed()}};
+
+\draw[-{Latex[length=2.5mm,width=1.8mm]}, very thick, darkGreen!80] (T4.south) -- (T5.north)
+  node[midway, arrowlabel, text=darkGreen!85!black] {Hybrid Vector Search, Session Caching, Object Storage \& Tracing};
+
+\end{tikzpicture}
+\caption{AgriSys Concrete Five-Tier Implementation Architecture with Technology Stack}
+\label{fig:impl_arch}
+\end{figure}

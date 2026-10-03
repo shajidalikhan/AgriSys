@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriSys: Toward a Next Generation Agricultural Expert System | Mid-3rd Semester Progress</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --primary: #0A2540;
+    --secondary: #0070F3;
+    --accent: #FFB000;
+    --success: #10B981;
+    --bg-page: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --bg-secondary: #F1F5F9;
+    --text-primary: #1E293B;
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-subtle: rgba(0, 112, 243, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --primary: #0F172A;
+      --secondary: #38BDF8;
+      --accent: #FBBF24;
+      --success: #34D399;
+      --bg-page: #0B0F19;
+      --bg-card: #131B2E;
+      --bg-secondary: #1E293B;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --border: #243048;
+      --border-subtle: rgba(56, 189, 248, 0.15);
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .deck {
+    width: 100%;
+    max-width: 1140px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 32px 32px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    position: relative;
+  }
+
+  /* Navigation Bar */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+
+  .nav-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .pill-btn {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pill-btn:hover {
+    border-color: var(--secondary);
+    color: var(--text-primary);
+  }
+
+  .pill-btn.active {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: #FFFFFF;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 112, 243, 0.3);
+  }
+
+  .nav-arrows {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .arr-btn {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .arr-btn:hover:not(:disabled) {
+    background: var(--bg-secondary);
+    border-color: var(--secondary);
+  }
+
+  .arr-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  #slide-counter {
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 0 6px;
+  }
+
+  /* Slide Area */
+  .slide {
+    display: none;
+    min-height: 500px;
+    position: relative;
+    animation: fadeIn 0.25s ease-out;
+  }
+
+  .slide.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+    position: relative;
+  }
+
+  .slide-num {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .slide-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+
+  .tag-intro { background: rgba(0, 112, 243, 0.12); color: #0070F3; }
+  .tag-lit { background: rgba(16, 185, 129, 0.12); color: #10B981; }
+  .tag-prob { background: rgba(239, 68, 68, 0.12); color: #EF4444; }
+  .tag-obj { background: rgba(139, 92, 246, 0.12); color: #8B5CF6; }
+  .tag-sys { background: rgba(14, 165, 233, 0.12); color: #0EA5E9; }
+  .tag-impl { background: rgba(16, 185, 129, 0.15); color: #059669; }
+  .tag-conc { background: rgba(0, 112, 243, 0.12); color: #0070F3; }
+
+  .slide-title {
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .slide-sub {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+  }
+
+  /* Two Column Clean Layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 14px;
+  }
+
+  .section-h {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--secondary);
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  /* Natural Academic Lists without forced boxes */
+  .academic-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .academic-list li {
+    font-size: 13.5px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding-left: 18px;
+    position: relative;
+  }
+
+  .academic-list li::before {
+    content: "•";
+    color: var(--secondary);
+    font-size: 20px;
+    position: absolute;
+    left: 0;
+    top: -2px;
+  }
+
+  .academic-list li strong {
+    color: var(--text-primary);
+  }
+
+  .academic-list li span.cite {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Only necessary callout / problem statement */
+  .ps-box {
+    border-left: 4px solid var(--secondary);
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border-radius: 0 10px 10px 0;
+    margin: 14px 0 20px;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.65;
+  }
+
+  .math-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--secondary);
+    margin: 6px 0;
+    text-align: center;
+  }
+
+  /* Stat cards */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .stat-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--secondary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* Tables */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .comp-table th {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-weight: 700;
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .comp-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+
+  .comp-table tr.highlight {
+    background: rgba(0, 112, 243, 0.08);
+    font-weight: 600;
+  }
+
+  .ok { color: #10B981; font-weight: 700; }
+  .ko { color: #EF4444; font-weight: 700; }
+
+  /* 5-Tier Architecture Layout */
+  .tier-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 10px;
+  }
+
+  .tier-row {
+    border-radius: 8px;
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .tier-row.t1 { background: rgba(0, 112, 243, 0.07); border-color: rgba(0, 112, 243, 0.25); }
+  .tier-row.t2 { background: rgba(10, 37, 64, 0.05); border-color: rgba(10, 37, 64, 0.2); }
+  .tier-row.t3 { background: rgba(139, 92, 246, 0.07); border-color: rgba(139, 92, 246, 0.25); }
+  .tier-row.t4 { background: rgba(245, 158, 11, 0.07); border-color: rgba(245, 158, 11, 0.25); }
+  .tier-row.t5 { background: rgba(14, 165, 233, 0.07); border-color: rgba(14, 165, 233, 0.25); }
+
+  .tier-label {
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 155px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+  }
+
+  .tier-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .agent-chips {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .agent-chip {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 4px;
+    text-align: center;
+  }
+
+  .chip-title { font-size: 10.5px; font-weight: 700; color: var(--text-primary); }
+  .chip-sub { font-size: 9.5px; color: var(--text-secondary); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Navigation Header -->
+  <div class="nav-bar">
+    <div class="nav-pills" id="pills"></div>
+    <div class="nav-arrows">
+      <button class="arr-btn" id="prev" onclick="go(-1)" disabled>←</button>
+      <span id="slide-counter"></span>
+      <button class="arr-btn" id="next" onclick="go(1)">→</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 0: TITLE -->
+  <div class="slide active" id="s0">
+    <span class="slide-num">Cover Slide</span>
+    <span class="slide-tag tag-intro">M.Tech Thesis Progress</span>
+    <div class="slide-title" style="font-size: 28px; margin-bottom: 6px;">Toward a Next Generation Agricultural Expert System</div>
+    <div class="slide-sub" style="font-size: 15.5px; margin-bottom: 24px; color: var(--secondary);">A Multimodal Conversational Approach — Mid-3rd Semester Progress</div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">146M+</div>
+        <div class="stat-label">Smallholder farm households in India</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">₹1.5L Cr</div>
+        <div class="stat-label">Annual crop loss from diseases & pests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">88.9%</div>
+        <div class="stat-label">Progress: 8/9 stages active (85/85 tests passed)</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top: 18px;">
+      <div>
+        <div class="section-h">Candidate & Guidance</div>
+        <ul class="academic-list" style="margin-top: 8px;">
+          <li><strong>Candidate:</strong> Shajid Ali Khan <span class="cite">(MCS25049)</span></li>
+          <li><strong>Programme:</strong> M.Tech. in Computer Science (Artificial Intelligence)</li>
+          <li><strong>Supervisor:</strong> Dr. Deepak Kumar Singh</li>
+          <li><strong>Department:</strong> Department of Computer Science & Application</li>
+          <li><strong>Institution:</strong> Indian Institute of Information Technology, Lucknow</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-h">Technological Highlights</div>
+        <ul class="academic-list" style="margin-top: 8px;">
+          <li><strong>Decoupled Architecture:</strong> 5-Tier system with 7 autonomous domain agents</li>
+          <li><strong>Diagnostic Vision:</strong> ViT-B/16 + Swin-T + ConvNeXt with Grad-CAM overlays</li>
+          <li><strong>Sensory & Economics:</strong> Soil IoT cross-modal MLP fusion + Agmarknet Prophet forecasts</li>
+          <li><strong>Multimodal Access:</strong> Whisper Large-v3 ASR + AI4Bharat Bhashini multilingual TTS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT SLIDE 1: INTRODUCTION (Clean, NO overflow) -->
+  <div class="slide" id="s1">
+    <span class="slide-num">Content Slide 1 / 8</span>
+    <span class="slide-tag tag-intro">Introduction</span>
+    <div class="slide-title">The Agricultural Advisory Crisis in India</div>
+    <div class="slide-sub">Structural bottlenecks depriving 146 million farmers of timely, localized expertise</div>
+
+    <ul class="academic-list" style="margin-top: 20px; gap: 16px;">
+      <li><strong>Severe Extension Shortage:</strong> Only 1 extension worker per 1,000+ farmers in India --- 146 million farm households make critical crop decisions with zero professional guidance <span class="cite">(ICAR, 2023)</span>.</li>
+      <li><strong>Catastrophic Crop Loss:</strong> 26--30% of annual crop production is lost to disease and pests, yet diagnosis relies on visual eye inspection well past the optimal chemical treatment window <span class="cite">(FAO, 2022)</span>.</li>
+      <li><strong>Soil Health Inaction:</strong> 230 million Soil Health Cards issued, but only 14.6% of farmers acted on them due to lack of localized actionable advice <span class="cite">(NABARD, 2023)</span>.</li>
+      <li><strong>Mandi Price Asymmetry:</strong> Farmers routinely sell 30--40% below optimal rates due to lack of real-time arrival data and localized price forecasting <span class="cite">(eNAM, 2023)</span>.</li>
+      <li><strong>Structural AI Barriers:</strong> Existing agricultural AI is English-centric, text-only, and connectivity-dependent --- structurally inaccessible to rural Indian smallholders.</li>
+    </ul>
+  </div>
+
+  <!-- CONTENT SLIDE 2: RELATED WORK -->
+  <div class="slide" id="s2">
+    <span class="slide-num">Content Slide 2 / 8</span>
+    <span class="slide-tag tag-lit">Literature Survey</span>
+    <div class="slide-title">Related Work & Research Gaps</div>
+    <div class="slide-sub">Comparative analysis of contemporary agricultural AI systems across key capabilities</div>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>System</th>
+          <th>Venue</th>
+          <th>Multi-Agent</th>
+          <th>VLM Disease</th>
+          <th>Soil Sensor</th>
+          <th>Weather</th>
+          <th>Farmer XAI</th>
+          <th>Voice / Indic</th>
+          <th>Live Market</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Farmer.Chat</strong> (2024)</td>
+          <td>ACM COMPASS</td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕ Generic</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ API</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ Partial</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ Deployed</span></td>
+        </tr>
+        <tr>
+          <td><strong>AgroAskAI</strong> (2024)</td>
+          <td>arXiv / AAAI</td>
+          <td><span class="ok">✓ Chain</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ Dedicated</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ Partial</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕ Prototype</span></td>
+        </tr>
+        <tr>
+          <td><strong>AgriGPT</strong> (2025)</td>
+          <td>arXiv</td>
+          <td><span class="ok">✓ Data eng</span></td>
+          <td><span class="ok">✓ VL ext.</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ Partial</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕ Prototype</span></td>
+        </tr>
+        <tr>
+          <td><strong>AgriM-LLM</strong> (2026)</td>
+          <td>Preprints</td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ Best VE</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕ Model only</span></td>
+        </tr>
+        <tr class="highlight">
+          <td><strong>AgriDoctor</strong> (2025)</td>
+          <td>IEEE Trans.</td>
+          <td><span class="ok">✓ Router+5</span></td>
+          <td><span class="ok">✓ Strong</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ok">✓ CN/EN only</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕ Prototype</span></td>
+        </tr>
+        <tr>
+          <td><strong>Agentic AI</strong> (2026)</td>
+          <td>MDPI Agri.</td>
+          <td><span class="ok">✓ 4 agents</span></td>
+          <td><span class="ok">✓ Rice CNN</span></td>
+          <td><span class="ok">✓ Partial</span></td>
+          <td><span class="ok">✓ Dedicated</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕</span></td>
+          <td><span class="ko">✕ Simulated</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top: 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.55;">
+      <strong>Key Research Gaps Identified (G1–G5):</strong> Existing systems operate as single-task silos. No prior platform fuses leaf images and soil telemetry in a dialogue loop, surfaces user-facing explainability (Grad-CAM/SHAP) in the client UI, or couples live mandi economics with agronomic advisory.
+    </div>
+  </div>
+
+  <!-- CONTENT SLIDE 3: PROBLEM STATEMENT -->
+  <div class="slide" id="s3">
+    <span class="slide-num">Content Slide 3 / 8</span>
+    <span class="slide-tag tag-prob">Problem Statement</span>
+    <div class="slide-title">Problem Statement</div>
+    <div class="slide-sub">Defining the core barrier hindering intelligent agricultural advisory</div>
+
+    <div class="ps-box" style="font-size: 15px; line-height: 1.75; padding: 22px 24px; margin-top: 24px;">
+      Current agricultural AI systems are fatally fragmented: deployed chatbots lack visual diagnostics, advanced vision models lack interactive conversational interfaces, multi-agent setups ignore live market economics, and none deliver explainable advice in native Indic languages. Consequently, no existing framework integrates speech, image, soil sensors, weather prediction, and live mandi prices into a single trustworthy advisory session.
+    </div>
+  </div>
+
+  <!-- CONTENT SLIDE 4: RESEARCH OBJECTIVES -->
+  <div class="slide" id="s4">
+    <span class="slide-num">Content Slide 4 / 8</span>
+    <span class="slide-tag tag-obj">Objectives</span>
+    <div class="slide-title">Research Objectives</div>
+    <div class="slide-sub">Execution blueprint for building and benchmarking AgriSys</div>
+
+    <ul class="academic-list" style="gap: 16px; margin-top: 20px;">
+      <li><strong>O1: Multi-Agent Orchestration Engine:</strong> Build a LangGraph state machine coordinating semantic query intent classification and dynamic routing across autonomous specialist agents <span class="cite">(agroaskai2024)</span>.</li>
+      <li><strong>O2: Multimodal Diagnostics & Sensor Fusion:</strong> Fine-tune deep vision ensembles (ViT, Swin, ConvNeXt) for disease detection and fuse leaf imagery with soil IoT telemetry via cross-modal MLP <span class="cite">(llmiCdp2025)</span>.</li>
+      <li><strong>O3: Grounded Knowledge RAG & Explainability:</strong> Construct a two-stage hybrid Qdrant/BM25 retrieval engine with confidence gating, rendering Grad-CAM and SHAP explanations <span class="cite">(ragMaize2026, xaiCrop2024)</span>.</li>
+      <li><strong>O4: Vernacular Voice, Weather & Mandi Intelligence:</strong> Deploy a low-latency 10-language Indic Whisper/Bhashini voice pipeline, LSTM/FAO-56 ET₀ irrigation models, and live Agmarknet/Prophet price forecasts <span class="cite">(enam2023, indicAsr2025)</span>.</li>
+      <li><strong>O5: Quantitative Verification & Agronomic Validation:</strong> Validate system performance against comprehensive 85+ test matrices and MIRAGE/AgMMU benchmarks with certified ICAR agronomists <span class="cite">(mirage2025, agmmu2025)</span>.</li>
+    </ul>
+  </div>
+
+  <!-- CONTENT SLIDE 5: SYSTEM ARCHITECTURE -->
+  <div class="slide" id="s5">
+    <span class="slide-num">Content Slide 5 / 8</span>
+    <span class="slide-tag tag-sys">Architecture</span>
+    <div class="slide-title">System Architecture: 5-Tier Decoupled Framework</div>
+    <div class="slide-sub">Updated production architecture featuring 7 parallel implemented specialist agents</div>
+
+    <div class="tier-stack">
+      <div class="tier-row t1">
+        <span class="tier-label">Tier 1 · Client Presentation</span>
+        <span class="tier-desc">React 18 PWA · HTML5 Web Audio PCM capture · Canvas Grad-CAM lesion overlay · Recharts telemetry gauges · Mobile-first offline UI</span>
+      </div>
+      <div class="tier-row t2">
+        <span class="tier-label">Tier 2 · API Gateway</span>
+        <span class="tier-desc">FastAPI + Uvicorn ASGI · Bidirectional WebSocket (<code style="color:var(--secondary)">/ws/chat</code>) · Sub-850\,ms TTFT delta streaming · CORS & rate limiting</span>
+      </div>
+      <div class="tier-row t3">
+        <span class="tier-label">Tier 3 · Cognitive Orchestrator</span>
+        <span class="tier-desc">LangGraph StateGraph · <code style="color:var(--secondary)">AgriSysState</code> context accumulator · Semantic Intent Router · Parallel 7-agent dispatch · Synthesis node</span>
+      </div>
+      <div class="tier-row t4" style="flex-direction: column; align-items: flex-start;">
+        <span class="tier-label" style="margin-bottom: 2px;">Tier 4 · Implemented Specialist Domain Agents Layer (7 Parallel Autonomous Agents)</span>
+        <div class="agent-chips">
+          <div class="agent-chip">
+            <div class="chip-title">Disease Agent</div>
+            <div class="chip-sub">ViT + Swin + Grad-CAM</div>
+          </div>
+          <div class="agent-chip">
+            <div class="chip-title">Crop Rec Agent</div>
+            <div class="chip-sub">XGBoost + TreeSHAP</div>
+          </div>
+          <div class="agent-chip">
+            <div class="chip-title">Nutrition Agent</div>
+            <div class="chip-sub">ResNet-50 + Soil MLP</div>
+          </div>
+          <div class="agent-chip">
+            <div class="chip-title">Weather Agent</div>
+            <div class="chip-sub">IMD + FAO-56 ET₀</div>
+          </div>
+          <div class="agent-chip">
+            <div class="chip-title">Market Agent</div>
+            <div class="chip-sub">Agmarknet + Prophet</div>
+          </div>
+          <div class="agent-chip">
+            <div class="chip-title">Diagram Agent</div>
+            <div class="chip-sub">Mermaid.js + 2D SVG</div>
+          </div>
+          <div class="agent-chip">
+            <div class="chip-title">Web Search</div>
+            <div class="chip-sub">Tavily Live Feeds</div>
+          </div>
+        </div>
+      </div>
+      <div class="tier-row t5">
+        <span class="tier-label">Tier 5 · Knowledge Grounding</span>
+        <span class="tier-desc">Qdrant Vector DB (1024-d Hybrid BM25/E5 RAG) · Redis session cache · Google Gemini 3.8 Flash / Multi-LLM Provider Factory (DIP)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT SLIDE 6: IMPLEMENTATION PROGRESS PART 1 -->
+  <div class="slide" id="s6">
+    <span class="slide-num">Content Slide 6 / 8</span>
+    <span class="slide-tag tag-impl">Implementation Progress</span>
+    <div class="slide-title">Implementation Progress: Diagnostic Vision & Knowledge RAG</div>
+    <div class="slide-sub">Stage 1 to 3: Deep computer vision ensembles, visual Grad-CAM saliency, and grounded vector retrieval</div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-h">Plant Pathology & Deep Vision (Stage 2)</div>
+        <ul class="academic-list" style="margin-top: 8px;">
+          <li><strong>Tri-Model Ensemble:</strong> Accuracy-weighted voting combining ViT-B/16 (768-d patch embeddings), Swin-T, and ConvNeXt-Tiny.</li>
+          <li><strong>Image Preprocessing QA:</strong> BRISQUE score screening rejects out-of-focus captures; CLAHE enhances low-light contrast.</li>
+          <li><strong>Pixel-Level Explainability:</strong> Grad-CAM heatmaps overlay active necrotic margins directly on leaf images in HTML5 Canvas:
+            <div class="math-card">L_{\text{Grad-CAM}}^c = \text{ReLU}\left(\sum_k \alpha_k^c A^k\right)</div>
+          </li>
+          <li><strong>Diagnostic Performance:</strong> Achieved <strong>94.2% Top-1 Accuracy</strong> and <strong>0.93 Macro-F1</strong> across multi-crop field benchmarks.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-h">Cognitive Orchestrator & Grounded RAG (Stages 1 & 3)</div>
+        <ul class="academic-list" style="margin-top: 8px;">
+          <li><strong>LangGraph Multi-Agent StateGraph:</strong> Asynchronous state machine routing queries dynamically with <code style="color:var(--secondary)">AgriSysState</code> memory.</li>
+          <li><strong>Two-Stage Hybrid RAG:</strong> Qdrant 1024-d dense embeddings + BM25Okapi sparse lexical search fused via RRF (k=60).</li>
+          <li><strong>Cross-Encoder Reranking:</strong> Top-20 retrieved candidates evaluated for strict query relevancy over 250k+ ICAR/TNAU chunks.</li>
+          <li><strong>Retrieval Metrics:</strong> Achieved <strong>0.884 MRR@5</strong> and <strong>93.6% Hit-Rate</strong> with automated hallucination confidence gating.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT SLIDE 7: IMPLEMENTATION PROGRESS PART 2 -->
+  <div class="slide" id="s7">
+    <span class="slide-num">Content Slide 7 / 8</span>
+    <span class="slide-tag tag-impl">Implementation Progress</span>
+    <div class="slide-title">Implementation Progress: Soil Telemetry, Economics & Verification</div>
+    <div class="slide-sub">Stage 4 to 8: Cross-modal sensor fusion, price forecasting, Indic speech, and test suite verification</div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-h">Sensory Fusion, Mandi & Hydrology (Stages 4–6)</div>
+        <ul class="academic-list" style="margin-top: 8px;">
+          <li><strong>Cross-Modal Nutrition Fusion:</strong> ResNet-50 visual symptom features fused with soil IoT (N, P, K, pH, EC) via MLP for precise fertilizer compensation doses (kg/ha).</li>
+          <li><strong>Crop Recommendation:</strong> 22-feature XGBoost classifier (<strong>95.8% Accuracy</strong>) with TreeSHAP local waterfall plots.</li>
+          <li><strong>Real-Time Mandi Forecasting:</strong> Agmarknet API (2,500+ APMCs) + Facebook Prophet 7-day forecast (<strong>8.4% MAPE</strong>) with MSP arbitrage.</li>
+          <li><strong>Physical Hydrology:</strong> IMD telemetry + Bi-LSTM rain prediction + FAO-56 Penman-Monteith ET₀ irrigation calculations.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-h">Indic Voice, Web PWA & System Verification</div>
+        <ul class="academic-list" style="margin-top: 8px;">
+          <li><strong>Indic Voice Pipeline:</strong> Whisper Large-v3 ASR (<strong>14.8% Hindi WER</strong>) + Silero VAD + AI4Bharat Bhashini 10-language TTS (turnaround &lt;650\,ms).</li>
+          <li><strong>React 18 PWA:</strong> Offline-first Service Workers, WebSocket (<code style="color:var(--secondary)">/ws/chat</code>) sub-850\,ms TTFT token streaming.</li>
+          <li><strong>Autonomous Diagram & Web Agents:</strong> Mermaid.js IPM decision trees, 2D SVG planting grids, and live Tavily search.</li>
+          <li><strong>Test Suite Verification:</strong> <span class="ok">✓ 85/85 Passing Tests (100%)</span> across all 8 stages; query latency ~1.85s (cached) / ~3.40s (uncached).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT SLIDE 8: FUTURE WORK & ROADMAP -->
+  <div class="slide" id="s8">
+    <span class="slide-num">Content Slide 8 / 8</span>
+    <span class="slide-tag tag-conc">Future Work & Roadmap</span>
+    <div class="slide-title">Future Work & Completion Roadmap (Phase IV)</div>
+    <div class="slide-sub">Execution schedule leading to automated benchmarking, field trials, dissertation, and defense</div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-h">Remaining Research Milestones (Oct 2026 – May 2027)</div>
+        <ul class="academic-list" style="margin-top: 8px;">
+          <li><strong>Objective 10 Benchmark Evaluation (Oct–Nov 2026):</strong> Automated RAGAS evaluation over 1,000+ validated agronomic QA pairs (faithfulness, answer relevance, context recall).</li>
+          <li><strong>Edge Model Quantization (Dec 2026–Jan 2027):</strong> INT8 / ONNX Runtime distillation of vision models for offline on-device inference on affordable Android smartphones.</li>
+          <li><strong>KVK Farmer Field Trial (Feb–Mar 2027):</strong> Field deployment with 50+ farmers in UP & Bihar across 5 crop categories in collaboration with Krishi Vigyan Kendra agronomists; measure adoption and usability.</li>
+          <li><strong>Dissertation & Oral Defense (Apr–May 2027):</strong> Submit final M.Tech thesis dissertation and complete oral defense.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-h">Delivery Schedule</div>
+        <table class="comp-table" style="margin-top: 8px;">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Milestone Focus</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>M1–3</td>
+              <td>RAG & Knowledge Database</td>
+              <td><span class="ok">✓ Completed</span></td>
+            </tr>
+            <tr>
+              <td>M4–6</td>
+              <td>Agent Models & Indic Voice</td>
+              <td><span class="ok">✓ Completed</span></td>
+            </tr>
+            <tr>
+              <td>M7–8</td>
+              <td>Web PWA & Core Integration</td>
+              <td><span class="ok">✓ Completed</span></td>
+            </tr>
+            <tr class="highlight">
+              <td><strong>M9</strong></td>
+              <td><strong>Mid-3rd Semester Progress</strong></td>
+              <td><span class="ok">✓ Current</span></td>
+            </tr>
+            <tr>
+              <td>M10</td>
+              <td>Objective 10 Benchmark Harness</td>
+              <td>In Progress</td>
+            </tr>
+            <tr>
+              <td>M11</td>
+              <td>KVK Farmer Field Trials</td>
+              <td>Upcoming</td>
+            </tr>
+            <tr>
+              <td>M12</td>
+              <td>Final Dissertation Defense</td>
+              <td>Target</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const titles = [
+    'Title',
+    'Crisis in India',
+    'Related Work',
+    'Problem Statement',
+    'Objectives',
+    '5-Tier Architecture',
+    'Implementation (Part 1)',
+    'Implementation (Part 2)',
+    'Future Work & Roadmap'
+  ];
+
+  let cur = 0;
+  const slides = document.querySelectorAll('.slide');
+  const pillsEl = document.getElementById('pills');
+  const counter = document.getElementById('slide-counter');
+
+  titles.forEach((t, i) => {
+    const b = document.createElement('button');
+    b.className = 'pill-btn' + (i === 0 ? ' active' : '');
+    b.textContent = t;
+    b.onclick = () => goTo(i);
+    pillsEl.appendChild(b);
+  });
+
+  function goTo(n) {
+    if (n < 0 || n >= slides.length) return;
+    slides[cur].classList.remove('active');
+    document.querySelectorAll('.pill-btn')[cur].classList.remove('active');
+    cur = n;
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.pill-btn')[cur].classList.add('active');
+    document.getElementById('prev').disabled = (cur === 0);
+    document.getElementById('next').disabled = (cur === slides.length - 1);
+    counter.textContent = (cur === 0 ? 'Cover Slide' : 'Slide ' + cur + ' of ' + (slides.length - 1));
+  }
+
+  function go(d) { goTo(cur + d); }
+
+  window.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'Space', 'PageDown'].includes(e.code)) {
+      e.preventDefault();
+      go(1);
+    } else if (['ArrowLeft', 'PageUp'].includes(e.code)) {
+      e.preventDefault();
+      go(-1);
+    } else if (e.code === 'Home') {
+      e.preventDefault();
+      goTo(0);
+    } else if (e.code === 'End') {
+      e.preventDefault();
+      goTo(slides.length - 1);
+    }
+  });
+
+  counter.textContent = 'Cover Slide';
+</script>
+</body>
+</html>

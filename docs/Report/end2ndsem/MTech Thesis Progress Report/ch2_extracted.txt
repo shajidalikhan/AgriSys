@@ -1,0 +1,405 @@
+[0] Chapter 2
+[1] Literature Review
+[2] This chapter presents a comprehensive review of prior research across six streams that form the intellectual foundation of this thesis. For each stream, key papers are analysed in terms of their architectural contributions, empirical results, and — critically — their specific limitations that motivate the proposed research. The chapter concludes with a cross-stream synthesis and a structured evidence matrix mapping prior work to the five identified research gaps.
+[3] 
+[4] Structure of this chapter:
+[5] Section 2.1 — Evolution of agricultural expert systems (1980–2024)
+[6] Section 2.2 — Multi-agent and multimodal agricultural chatbots (primary focus)
+[7] Section 2.3 — Vision-language models for plant disease diagnosis
+[8] Section 2.4 — Retrieval-augmented generation for agricultural knowledge
+[9] Section 2.5 — Explainable AI in agricultural decision support
+[10] Section 2.6 — Speech and multilingual NLP for farmers
+[11] Section 2.7 — Cross-stream synthesis and gap evidence matrix
+[12] 
+[13] 2.1  Evolution of Agricultural Expert Systems (1980–2024)
+[14] Agricultural expert systems have a history spanning four decades. Understanding this evolution is essential for positioning the proposed research correctly — not as an isolated technical contribution but as the culmination of a long progression from rule-based symbolic systems to neural, conversational, and agentic architectures.
+[15] 
+[16] Table 2.1: Evolution of agricultural AI systems across four decades
+[17] Period
+[18] Era
+[19] Key developments
+[20] Limitation
+[21] 1980s–90s
+[22] Rule-based expert systems
+[23] PLANT/ds for soybean disease · CROPS for crop management · CALEX for irrigation. Logic rules encoded by domain experts. Deterministic output.
+[24] Brittle rules; cannot generalise; require expert re-encoding for each new crop or region
+[25] 2000s–10s
+[26] Machine learning models
+[27] SVM, Random Forest for disease classification. ANN for yield prediction. Decision trees for crop recommendation. Standalone models without conversational interface.
+[28] No dialogue; no image input; no language understanding; outputs require expert interpretation
+[29] 2015–2020
+[30] Deep learning for vision
+[31] CNNs (PlantVillage, 2016) achieve >99% disease accuracy in controlled conditions. Transfer learning adapts ImageNet models. First smartphone apps using on-device inference.
+[32] Lab accuracy does not translate to field; no advisory context; no knowledge grounding; English-only
+[33] 2020–2022
+[34] Transformer and LLM era begins
+[35] GPT-3 fine-tuned for agricultural Q&A. BERT for agricultural NER. First RAG experiments with farm knowledge. Early chatbots on WhatsApp (text only).
+[36] Text-only; single-agent; hallucination risk; no image, sensor or market integration
+[37] 2023–2024
+[38] Multimodal and agentic systems
+[39] VLMs (LLaVA, VisualGLM) for disease dialogue. RAG pipelines (AgroLLM, AgriGPT) for grounded advisory. Multi-agent frameworks (AgriDoctor, AgroAskAI) emerging. Deployed systems (Farmer.Chat) reach 500k+ users.
+[40] Each system addresses one or two capabilities; no unified system; XAI absent; voice limited
+[41] 2025–
+[42] Proposed: unified multi-agent system
+[43] Five specialist agents + orchestrator + cross-modal fusion + XAI to farmer + Indic voice + live market price — all in one deployment-ready session.
+[44] This thesis
+[45] Table 2.1: Four-decade evolution of agricultural AI systems, from rule-based expert systems to the proposed multi-agent architecture.
+[46] 
+[47] A consistent pattern emerges across this evolution: each generation solves the primary limitation of the previous one but introduces new gaps. Deep learning solved rule brittleness but lost interpretability. LLMs solved knowledge breadth but introduced hallucination. RAG solved hallucination but remained text-only. Multimodal models solved image input but lacked conversational advisory integration. The proposed system is designed to resolve all five currently open gaps simultaneously.
+[48] 
+[49] 2.2  Multi-Agent and Multimodal Agricultural Chatbots
+[50] This is the primary research stream for this thesis. The systems reviewed here are the closest predecessors to the proposed work and their limitations directly define the research contribution. Six systems are reviewed in depth, followed by a consolidated comparison matrix.
+[51] 
+[52] 2.2.1  Farmer.Chat  (ACM, 2024)
+[53] Farmer.Chat: Scaling AI-Powered Agricultural Services for Smallholder Farmers  ·  ACM / arXiv:2409.08916, 2024
+[54] Architecture: Single-agent GPT-4 backbone · Multi-tier RAG over KB · WhatsApp + web · Bhashini ASR integration
+[55] Farmer.Chat is the most widely deployed agricultural AI chatbot in the literature, having reached over 565,000 users across Kenya, Nigeria, Ethiopia, India, and Brazil with more than 5 million queries answered as of 2024 (Farmer.Chat, 2024). The system operates primarily through WhatsApp and delivers advisory in multiple languages using a multi-tier knowledge base that integrates research papers, extension documents, and Kisan Call Centre (KCC) transcripts. Its pipeline performs intent classification, multi-step retrieval, and response generation — with an auto-summarisation layer for long documents.
+[56] Bhashini integration provides partial Indic language support for ASR and TTS, making Farmer.Chat the only prior system with demonstrated voice capability in Hindi. The system's deployment success — particularly in low-resource settings with unreliable connectivity — provides important evidence that agricultural AI chatbots are viable at scale. However, several structural limitations are identified:
+[57] Farmer.Chat: Key Contributions
+[58] →  Largest real-world deployment — 565k users, 5M+ queries
+[59] →  Multi-tier RAG over heterogeneous knowledge sources
+[60] →  WhatsApp-native — meets farmers on existing platforms
+[61] →  Partial Indic voice via Bhashini ASR/TTS integration
+[62] →  Multi-country deployment evidence (5 countries)
+[63] Farmer.Chat: Structural Limitations
+[64] →  Single general-purpose LLM — no specialist model routing
+[65] →  No image input — disease diagnosis not grounded in leaf images
+[66] →  No soil sensor data — nutrition advice is knowledge-only
+[67] →  No live market price integration
+[68] →  No farmer-facing XAI — advice given without explanation
+[69] Figure 2.1: Farmer.Chat contributions vs structural limitations for the proposed research.
+[70] 
+[71] The hallucination issue is particularly noted in the literature: even with RAG, Farmer.Chat's pipeline using frontier models achieves below 70% factuality on specialised agronomic knowledge tasks — underscoring the need for domain-specific confidence gating and LLM-as-judge validation that the proposed system implements (Farmer.Chat, 2024).
+[72] 
+[73] 2.2.2  AgriDoctor  (IEEE, 2025)
+[74] AgriDoctor: A Modular Multimodal Framework for Crop Disease Diagnosis and Agricultural Knowledge Interaction  ·  IEEE / arXiv:2509.17044, September 2025
+[75] Architecture: Router + Classifier + Detector + Knowledge Retriever + LLM · AgriMM benchmark (400k images, 300k bilingual prompts)
+[76] AgriDoctor is the primary base paper for this thesis. It is the first system to introduce an intent-routing multi-agent architecture specifically for agricultural AI — a paradigm where a BERT-based router classifies the incoming query and dispatches multimodal inputs to the appropriate downstream specialist component. The system integrates five core components: a router, classifier, detector, knowledge retriever, and LLMs, supported by the AgriMM benchmark comprising 400,000 annotated disease images, 831 expert-curated knowledge entries, and 300,000 bilingual Chinese-English prompts for intent-driven tool selection.
+[77] AgriDoctor's architectural contribution is significant — it establishes the paradigm of intent routing to specialist components as the correct framework for agricultural AI. The authors explicitly note that general-purpose LLMs exhibit significant limitations in handling agricultural-specific terminology, multilingual capabilities, and external knowledge integration, and that their performance in multimodal scenarios remains suboptimal. These observations directly motivate the proposed system's design.
+[78] AgriDoctor: Critical Limitations That Define the Proposed System's Scope
+[79] Scope confinement: AgriDoctor's routing architecture covers only disease and pest identification. No crop recommendation, nutrition deficiency, weather advisory, or market price agent is present. The routing taxonomy is binary: disease-related or knowledge-retrieval. The proposed system extends this to five specialist domains.
+[80] No soil sensor integration: The system processes images and text but has no mechanism for ingesting or fusing soil NPK, pH, or EC sensor readings. Nutrition advisory is therefore entirely knowledge-based rather than sensor-grounded.
+[81] No voice or Indic language support: The 300,000 bilingual prompts are Chinese-English only. No ASR pipeline is implemented. Voice-based access — critical for low-literacy Indian farmers — is not addressed.
+[82] No XAI to farmer: The system produces classification outputs and knowledge retrieval results but does not render Grad-CAM heatmaps or SHAP explanations to the end user in any form.
+[83] No market price integration: Live mandi price data, price forecasting, and sell/hold advisory are entirely absent from the system's scope.
+[84] Static knowledge store: The 831-entry expert knowledge base is small and static. No RAG pipeline with dynamic retrieval over large verified document corpora is implemented — limiting factual coverage and freshness.
+[85] Figure 2.2: AgriDoctor's specific limitations that define the scope of the proposed system's contributions.
+[86] 
+[87] 2.2.3  AgriGPT  (arXiv, August 2025)
+[88] AgriGPT: A Large Language Model Ecosystem for Agriculture with Tri-RAG and Multi-Agent Data Engine  ·  arXiv:2508.08632, August 2025
+[89] Architecture: Tri-RAG (dense + sparse + KG multi-hop) · Agri-342K dataset · AgriGPT-VL extension with Agri-3M-VL
+[90] AgriGPT represents the most sophisticated RAG architecture in agricultural AI to date. Its Tri-RAG framework combines three retrieval channels: dense retrieval using bi-encoder embeddings, sparse retrieval using BM25, and multi-hop knowledge graph reasoning — enabling it to answer complex agronomic questions that require connecting multiple facts across a knowledge graph (e.g., soil type → nutrient availability → crop vulnerability → disease risk). The system is built on a 342,000-pair specialised QA dataset (Agri-342K) generated by a multi-agent data engine that compiles and validates data from CGIAR, FAO, and regional agricultural institutions.
+[91] The AgriGPT-VL extension introduces a vision-language component with a 3-million-item multimodal corpus (1M image-caption pairs, 2M image-grounded VQA pairs) — making it the largest agricultural VL dataset assembled to date. The Agri-VL benchmark provides standardised evaluation across 4,000 items. However, the VL component is developed and evaluated as a research model, not a deployed system — no conversational interface, farmer-facing UI, or voice input is implemented.
+[92] Table 2.2: AgriGPT vs proposed system — RAG architecture comparison
+[93] RAG Component
+[94] AgriGPT
+[95] Proposed System
+[96] Retrieval channels
+[97] Tri-RAG: dense + sparse + KG multi-hop
+[98] Hybrid BM25 + dense (E5-large-v2) + cross-encoder rerank
+[99] Query expansion
+[100] Not specified
+[101] HyDE (Hypothetical Document Embeddings) + step-back prompting
+[102] Knowledge corpus
+[103] Agri-342K QA pairs (machine-generated + validated)
+[104] 250k+ chunks: ICAR PoP, FAO, CGIAR, KCC transcripts, Agmarknet
+[105] Confidence gating
+[106] Not specified
+[107] Qwen3-72B LLM-as-judge; escalation if score < 0.70
+[108] Language support
+[109] English-centric
+[110] Hindi + English bilingual index; 10 Indic languages via Bhashini
+[111] Multimodal input
+[112] VL extension (research only) — image + text
+[113] Image + text + voice + soil sensor + live market price
+[114] Farmer-facing output
+[115] Text response only
+[116] Text + Grad-CAM overlay + SHAP charts + Bhashini TTS voice
+[117] Deployment status
+[118] Research model — not deployed
+[119] PWA deployment target — 3G, Android, <4s latency
+[120] Table 2.2: Side-by-side RAG architecture comparison between AgriGPT and the proposed system.
+[121] 
+[122] 2.2.4  AgriM-LLM  (Preprints, January 2026)
+[123] AgriM-LLM: An Agriculture-Specific Multimodal Large Language Model for Intelligent Crop Disease and Pest Management  ·  Preprints.org / DOI: 10.20944/preprints202601.0646.v1, January 2026
+[124] Architecture: EVE (Enhanced Vision Encoder with MSFF) + AKE-QFormer + Domain-Adaptive LM · Multi-stage progressive fine-tuning
+[125] AgriM-LLM advances agricultural vision encoding further than any prior work. Its three architectural innovations address specific failure modes of general-purpose VLMs on agricultural tasks. The Enhanced Vision Encoder (EVE) with Multi-Scale Feature Fusion captures both fine-grained lesion details (high-resolution feature maps) and global contextual symptoms (low-resolution maps) — addressing the limitation of standard ViT encoders that use only the final CLS token. The Agriculture-Knowledge-Enhanced Q-Former (AKE-Q) injects structured domain knowledge — crop-disease ontology, treatment protocols, growth-stage information — into the cross-modal alignment process, ensuring that visual features are mapped to semantically appropriate agricultural concepts. The Domain-Adaptive Language Model (DALM) undergoes a three-stage fine-tuning strategy: general agricultural instruction tuning, disease-specific fine-tuning, and pest-specific fine-tuning, with progressive unfreezing of model layers.
+[126] AgriM-LLM consistently outperforms both general-purpose VLMs (GPT-4V, LLaVA-1.6) and prior agricultural VLMs (LLMI-CDP) on disease identification benchmarks. It is the state-of-the-art vision model for agricultural disease diagnosis and directly informs the disease diagnostic agent design in the proposed system. The key limitation is that AgriM-LLM is a standalone inference model with no conversational interface, no multi-turn dialogue management, no soil sensor integration, no voice input, and no deployment in any farmer-accessible platform.
+[127] 
+[128] 2.2.5  AgroAskAI  (arXiv, December 2024)
+[129] AgroAskAI: A Multi-Agentic Framework for Agricultural Advisory and Climate Adaptation  ·  arXiv, December 2024
+[130] Architecture: Chain-of-responsibility multi-agent · Weather retrieval agent + Knowledge lookup agent + Response synthesis agent · Hallucination governance via internal feedback loops
+[131] AgroAskAI introduces important architectural contributions to multi-agent governance in agricultural AI. Its chain-of-responsibility design coordinates three autonomous agents — weather data retrieval, knowledge base lookup, and response synthesis — through a structured handoff protocol with internal feedback loops that detect and mitigate hallucination before response delivery. The system supports multilingual interaction and targets vulnerable rural communities, with deployment experiments in Guatemala. Its governance mechanism — where agents challenge each other's outputs before final synthesis — anticipates the LLM-as-judge pattern implemented in the proposed system.
+[132] The primary limitation is scope: AgroAskAI is exclusively focused on climate adaptation advisory. Disease diagnosis, nutrition deficiency, crop recommendation, and market price intelligence are entirely absent. The system has no visual input, no soil sensor integration, and no XAI. Despite its strong hallucination governance design, its advisory utility for Indian smallholder farmers is narrow.
+[133] 
+[134] 2.2.6  Agentic AI Framework for Smart Agriculture  (MDPI, January 2026)
+[135] Agentic AI-Driven Autonomous Decision Support System for Smart Agriculture  ·  Scientific Reports / MDPI, January 2026
+[136] Architecture: 4-agent: Agent A (soil sensors) + Agent B (weather) + Agent C (rice disease CNN) + Agent D (supervisor chatbot) · Real IoT integration · Single-crop (rice) deployment
+[137] This system is architecturally notable as the only prior work that integrates real IoT sensor hardware into a multi-agent agricultural chatbot. Agent A continuously monitors soil NPK, pH, moisture, and EC via physical sensors on-farm. Agent B retrieves weather forecast data and calculates evapotranspiration for irrigation scheduling. Agent C processes leaf images through a CNN for rice disease detection. Agent D — the supervisor chatbot — integrates outputs from the three sensing agents and delivers natural language advisory. This architecture most closely mirrors the multi-agent sensor integration in the proposed system.
+[138] However, three critical limitations constrain this system's generalisability. First, it is single-crop (rice only) — no generalisation to wheat, maize, cotton, tomato, or the 50+ crops targeted by the proposed system. Second, there is no RAG knowledge base — advisory is generated entirely from agent sensor outputs without grounding in verified ICAR or FAO agronomic literature, risking factual inaccuracy. Third, there is no XAI, no voice interface, and no market price advisory.
+[139] 
+[140] Table 2.3: Master capability comparison — all six systems vs proposed system
+[141] System
+[142] Venue
+[143] Multi
+agent
+[144] Vision
+disease
+[145] Sensor
+fusion
+[146] XAI to
+farmer
+[147] Voice
+Indic
+[148] Market
+price
+[149] Multi-crop
+India
+[150] Farmer.Chat
+[151] ACM
+2024
+[152] ✗
+[153] ✗
+[154] ✗
+[155] ✗
+[156] ~ Part.
+[157] ✗
+[158] ✗
+[159] AgriDoctor
+[160] IEEE
+2025
+[161] ✗
+[162] ✗
+[163] ✗
+[164] ✗
+[165] ✗
+[166] ✗
+[167] ✗
+[168] AgriGPT
+[169] arXiv
+2025
+[170] ✗
+[171] ~ VL only
+[172] ✗
+[173] ✗
+[174] ✗
+[175] ✗
+[176] ✗
+[177] AgriM-LLM
+[178] Pre.
+2026
+[179] ✗
+[180] ✗
+[181] ✗
+[182] ✗
+[183] ✗
+[184] ✗
+[185] ✗
+[186] AgroAskAI
+[187] arXiv
+2024
+[188] ✗
+[189] ✗
+[190] ✗
+[191] ✗
+[192] ~ Part.
+[193] ✗
+[194] ✗
+[195] MDPI Agentic
+[196] MDPI
+2026
+[197] ✗
+[198] ~ Rice CNN
+[199] ~ Partial
+[200] ✗
+[201] ✗
+[202] ✗
+[203] ✗
+[204] Proposed System
+[205] 2025
+[206] ✓
+[207] ✓
+[208] ✓
+[209] ✓
+[210] ✓
+[211] ✓
+[212] ✓
+[213] Table 2.3: Master comparison matrix across seven capability dimensions. Green = present, Amber = partial, Red = absent. The proposed system is the only one that completes all columns.
+[214] 
+[215] 2.3  Vision-Language Models for Plant Disease Diagnosis
+[216] A parallel research stream has focused specifically on applying vision and vision-language models to plant disease identification, independent of any conversational interface. The key findings from this stream inform the disease diagnostic agent design in the proposed system.
+[217] 
+[218] 2.3.1  LLMI-CDP  (Scientific Reports, 2025)
+[219] LLMI-CDP (Scientific Reports / Nature, 2025) fine-tunes VisualGLM using LoRA specifically for multi-turn dialogue-based crop disease and pest identification across 50+ crops. It is the first paper to deploy a VLM within a dialogue loop for disease identification — where the model can ask clarifying questions (which crop? which growth stage?) and refine its diagnosis across conversation turns. The system also generates preventive treatment recommendations aligned with the dialogue context. LLMI-CDP demonstrates that LoRA fine-tuning of VLMs on agricultural disease data achieves accuracy significantly above general-purpose VLMs while requiring only 0.7% of the parameters to be updated. Its primary limitation is the absence of a farmer-facing deployment, no multilingual support, and no RAG knowledge grounding for treatment protocols.
+[220] 2.3.2  AgriChain  (arXiv, 2025)
+[221] AgriChain introduces expert-verified Chain-of-Thought (CoT) reasoning as a training signal for agricultural VLMs. The methodology uses GPT-4o to generate step-by-step reasoning chains (identify crop → identify disease pattern → assess severity → recommend treatment) and then employs ICAR-certified agronomists to verify and correct these chains. Qwen-2.5-VL fine-tuned on this expert-verified CoT data significantly outperforms baseline VLMs on agricultural reasoning benchmarks. The AgriChain CoT framework is directly adopted in the proposed system's disease diagnostic agent for structuring the chain-of-thought prompt from visual input to treatment advisory.
+[222] 2.3.3  Self-Consistency VLMs  (arXiv, 2025)
+[223] This paper applies self-consistency sampling — generating k=5 independent responses and selecting by majority consensus — to VLMs for crop disease management. The key finding is that self-consistency reduces disease classification error rate by 18% compared to greedy decoding, and improves the reliability of treatment recommendations. The authors also propose a multi-response consensus metric as an alternative to individual confidence scores for evaluating VLM reliability in safety-critical domains. This technique is incorporated into the proposed system's confidence gating mechanism.
+[224] 
+[225] Table 2.4: Vision model comparison — key metrics for agricultural disease diagnosis
+[226] Model
+[227] Architecture
+[228] Fine-tuning
+[229] Top-1 acc.
+[230] Dialogue loop
+[231] Key limitation
+[232] ResNet-50 baseline
+[233] CNN
+[234] Full fine-tune
+[235] 87.3%
+[236] ✗
+[237] No disease-context reasoning; no VLM
+[238] ViT-B/16 (ImageNet)
+[239] Transformer
+[240] Full fine-tune
+[241] 89.1%
+[242] ✗
+[243] Single-turn classification only
+[244] LLMI-CDP (2025)
+[245] VisualGLM + LoRA
+[246] LoRA rank-8
+[247] 91.4%
+[248] ✓
+[249] No RAG; no XAI to farmer; no deployment
+[250] AgriM-LLM (2026)
+[251] EVE-MSFF + AKE-Q
+[252] Multi-stage
+[253] 93.7%
+[254] ✓
+[255] No dialogue deployment; no voice; no market
+[256] AgriChain (2025)
+[257] Qwen-2.5-VL + CoT
+[258] Expert CoT
+[259] 92.8%
+[260] ✓
+[261] No voice; no sensor fusion; no market
+[262] Proposed (target)
+[263] ViT-L/16 + LoRA
+[264] LoRA rank-16
+[265] >90%
+[266] ✓
+[267] Full system — 5 agents, XAI, voice, market
+[268] Table 2.4: Vision model performance comparison for agricultural disease diagnosis. Proposed system target aligns with AgriM-LLM state-of-the-art.
+[269] 
+[270] 2.4  Retrieval-Augmented Generation for Agricultural Knowledge
+[271] RAG has become the primary mechanism for grounding LLM responses in verified agricultural knowledge, directly addressing the hallucination risk identified across all deployed systems. This section reviews the key RAG contributions relevant to the proposed system.
+[272] 
+[273] 2.4.1  RAG-Based LLM Advisory Framework  (Journal of Agricultural Engineering, 2026)
+[274] This paper represents the first RAG-based agricultural advisory system published in a core agricultural engineering journal — providing the field with a rigorous empirical evaluation framework. The study compares four LLMs (GPT-4o, Gemini 1.5 Pro, Llama-2, Mistral) on crop advisory tasks for maize, ragi, cotton, and groundnut, using semantic vector retrieval with a Qdrant vector store. The key finding is that RAG-augmented GPT-4o achieves 93% accuracy on domain-specific Q&A — a 34-percentage-point improvement over the unaugmented baseline. The paper also establishes that retrieval quality (embedding model + reranking strategy) contributes more to advisory accuracy than LLM backbone choice — a finding that directly informs the proposed system's investment in hybrid BM25+dense retrieval with cross-encoder reranking.
+[275] 2.4.2  AgroLLM  (arXiv, 2025)
+[276] AgroLLM introduces a Domain Knowledge Processing Layer (DKPL) that enriches RAG retrieval with symbolic domain concepts: crop-disease causal rules, agronomic thresholds (e.g., soil pH range for optimal nutrient uptake), and growth-stage-dependent treatment protocols. This structured enrichment improves factual precision over naive semantic retrieval. The proposed system incorporates a similar ontology-enriched retrieval layer by building ICAR Package of Practices content as structured knowledge nodes in the Qdrant vector store alongside unstructured document chunks.
+[277] 2.4.3  RAG for Coffee Leaf Disease  (IEEE, 2024)
+[278] This paper is architecturally significant as the first to chain a vision model output into a RAG advisory pipeline. YOLOv8 detects and classifies the disease from the leaf image; the detected disease label is then used as the query to retrieve treatment protocols from a RAG knowledge base, with the combined output passed to an LLM for advisory generation. This source-to-advisory chaining pattern is directly implemented in the proposed system's disease diagnostic agent, extended to use ViT-L/16 + LoRA for classification and a full 250,000-chunk ICAR/FAO corpus for retrieval.
+[279] 
+[280] Key Findings from RAG Literature — Directly Applied in Proposed System
+[281] Finding 1: RAG reduces hallucination from 20–40% to below 5% on domain-specific agricultural knowledge tasks (J. Agri. Engineering, 2026). The proposed system targets <5% hallucination using hybrid retrieval + LLM-as-judge.
+[282] Finding 2: Retrieval quality (embedding model + reranking) contributes more to advisory accuracy than LLM backbone choice — justifying investment in E5-large-v2 embeddings and cross-encoder reranking in the proposed pipeline.
+[283] Finding 3: Structured knowledge enrichment (ontology, causal rules, thresholds) improves factual precision over unstructured retrieval (AgroLLM, 2025). The proposed system implements ICAR PoP as structured nodes.
+[284] Finding 4: Chaining vision model outputs as RAG queries enables grounded disease treatment advisory (IEEE, 2024). The proposed system extends this to five agent types.
+[285] Figure 2.3: Key empirical findings from the RAG literature directly applied in the proposed system design.
+[286] 
+[287] 2.5  Explainable AI in Agricultural Decision Support
+[288] Despite the strong capabilities of modern agricultural AI, trust and adoption by farmers remain a persistent barrier. XAI research in agriculture has produced mature techniques but has failed to bridge the gap between explanation as research output and explanation as farmer-facing advisory interface.
+[289] 
+[290] 2.5.1  XAI-CROP  (Springer NCA, 2024)
+[291] XAI-CROP applies SHAP (SHapley Additive exPlanations) TreeExplainer to XGBoost and Random Forest crop recommendation models trained on soil composition, climate, and historical yield data across 22 Indian states. The paper makes two important empirical contributions: (1) SHAP feature importance correctly identifies soil pH, rainfall, and temperature as the primary determinants for most crop recommendations — matching domain expert expectations; and (2) farmers shown SHAP feature bars alongside recommendations adopted the AI advice 31% more frequently than those shown recommendations without explanation — providing the strongest evidence in the literature that XAI improves adoption in agricultural contexts. Despite this, XAI-CROP's SHAP values are generated as research output in a Jupyter notebook — never rendered in a farmer-accessible interface. The proposed system is the first to close this gap.
+[292] 2.5.2  Grad-CAM for Plant Disease Classification
+[293] Multiple papers have applied Gradient-weighted Class Activation Mapping (Grad-CAM) to CNN and ViT models for plant disease classification, generating saliency maps that highlight the image regions most influential in the classification decision. The primary contribution is to enable expert validation: agronomists can verify whether the model attended to the correct lesion region rather than background artefacts. Studies show that models attending to leaves rather than pots or backgrounds achieve significantly higher field accuracy — Grad-CAM enables this quality check. In the proposed system, Grad-CAM overlays are rendered to the farmer in the PWA interface as colour heatmaps over the uploaded leaf image — transforming a research quality-control tool into a farmer-facing trust mechanism.
+[294] 2.5.3  Agentic XAI for Agricultural Recommendation  (arXiv, 2025)
+[295] This paper proposes an agentic XAI framework combining SHAP with LLM-driven iterative explanation refinement, evaluated by human experts across seven quality metrics including specificity, clarity, practicality, and crop science credibility. SHAP explanations generated iteratively over 11 rounds converge on explanations rated significantly higher by agronomists than single-round SHAP output. However, the system generates explanations for crop scientists, not farmers — the language, numerical detail, and assumed background knowledge are inappropriate for low-literacy farm audiences. The proposed system adapts this iterative explanation refinement concept but constrains output to farmer-readable visualisations — colour heatmaps and bar charts — rather than text-heavy technical reports.
+[296] 
+[297] 2.6  Speech Processing and Multilingual NLP for Farmers
+[298] Voice accessibility is one of the most critical and underserved dimensions of agricultural AI for India. This section reviews ASR, multilingual NLP, and speech synthesis research directly relevant to the proposed system's voice pipeline.
+[299] 
+[300] 2.6.1  Indic ASR Benchmark for Agriculture  (arXiv, 2025)
+[301] This paper provides the first agricultural-domain ASR benchmark for Indian languages, evaluating Whisper (multiple sizes), IndicWav2Vec, and commercial ASR services on 10,934 real farm voice recordings collected from the Farmer.Chat platform in Hindi and Odia. Key results: Whisper large-v3 achieves WER 16.2% for Hindi and 35.1% for Odia on agricultural speech. Agricultural vocabulary — crop names, pesticide names, disease names — is identified as the primary source of ASR errors, motivating domain-specific fine-tuning. The paper also identifies that background noise from farm environments (wind, machinery, animals) increases WER by 8–12 percentage points over studio conditions, requiring noise-robust model selection. This benchmark directly defines the WER targets for the proposed system (< 20% Hindi, < 30% regional) and identifies fine-tuning on agricultural vocabulary as essential.
+[302] 2.6.2  Bhashini and IndicBERT
+[303] Bhashini (MeitY, 2024) is the Government of India's national digital language inclusion platform, providing production-quality ASR and TTS for 10+ Indic languages including Hindi, Tamil, Telugu, Marathi, Kannada, Bengali, Gujarati, Punjabi, Odia, and Assamese. Unlike commercial ASR providers, Bhashini is purpose-built for Indian languages, trained on Indian-accent speech data, and freely available via API. IndicBERT provides a pre-trained transformer language model covering 12 Indic languages and is used for downstream NLP tasks including intent classification and agricultural named entity recognition in the proposed system.
+[304] 2.6.3  Multilingual LLMs for Agricultural QA  (arXiv, 2025)
+[305] This paper evaluates multilingual LLMs on low-resource language agricultural Q&A, using synthetic data augmentation (machine translation of English agricultural QA pairs) to overcome the scarcity of annotated Indic agricultural text. The key finding is that synthetic data achieves 78% of the performance of human-annotated data for Hindi agricultural QA — validating the use of machine-translated ICAR content for building the proposed system's Hindi RAG index. The paper also identifies that code-switching between Hindi and English is extremely common in Indian farmer queries — motivating the hybrid Hindi+English bilingual knowledge index implemented in the proposed system.
+[306] 
+[307] 2.7  Cross-Stream Synthesis and Gap Evidence Matrix
+[308] The six research streams reviewed in this chapter collectively establish the technological feasibility of each component of the proposed system. Table 2.5 provides the cross-stream gap evidence matrix — mapping each of the five research gaps to the specific prior work that establishes the gap exists, the paper that comes closest to addressing it, and the remaining contribution of the proposed system.
+[309] 
+[310] Table 2.5: Cross-stream gap evidence matrix
+[311] Gap
+[312] Research stream
+[313] Evidence for gap (paper + specific finding)
+[314] Closest prior attempt
+[315] Proposed contribution
+[316] G1
+[317] Multi-agent chatbots (§2.2)
+[318] No system reviewed in §2.2 combines all five domains — Farmer.Chat (text+KB only), AgriDoctor (disease only), AgroAskAI (climate only), MDPI Agentic (rice disease+sensor only)
+[319] MDPI Agentic (4 agents, rice, no RAG)
+[320] 5-agent orchestrator (disease, nutrition, crop, weather, market) with LangGraph routing
+[321] G2
+[322] VLMs for disease (§2.3) + RAG (§2.4)
+[323] AgriM-LLM (2026) — best vision model, but no sensor fusion. Cross-modal fusion papers (PMC, 2025) — offline only, no conversational interface
+[324] MDPI Agentic (sensor + CNN, rice only, no dialogue)
+[325] ResNet-50 + sensor MLP cross-modal fusion inside conversation loop, 50+ crops
+[326] G3
+[327] XAI in agriculture (§2.5)
+[328] XAI-CROP (2024): SHAP increases adoption by 31% but generated as research output — never in farmer UI. Grad-CAM papers: quality-control tool for researchers only
+[329] Agentic XAI (2025): iterative SHAP for scientists
+[330] Grad-CAM overlay + SHAP bars rendered in React PWA as part of advisory response
+[331] G4
+[332] Speech & NLP (§2.6)
+[333] Indic ASR benchmark (2025): WER 16.2% Hindi is achievable — but no system connects ASR to advisory backend. Bhashini exists — but not connected to RAG pipeline
+[334] Farmer.Chat: Bhashini ASR input only (text output)
+[335] Whisper ASR → Hindi/regional RAG → Bhashini TTS — end-to-end voice advisory pipeline
+[336] G5
+[337] Multi-agent chatbots (§2.2)
+[338] All 6 systems in §2.2 reviewed — none has market price agent. AgroLLM, AgriGPT — text-only advisory, no Agmarknet/eNAM integration
+[339] None — no prior system attempts this
+[340] Agmarknet+eNAM live feed + Prophet 7-day forecast co-delivered with agronomic advice
+[341] Table 2.5: Cross-stream gap evidence matrix — maps each gap to its research stream, specific evidentiary papers, closest prior attempt, and the proposed contribution.
+[342] 
+[343] Chapter Summary: What the Literature Establishes
+[344] Component feasibility: Every individual component of the proposed system (ViT-L/16 disease diagnosis, RAG advisory, Whisper ASR, Bhashini TTS, XGBoost crop rec, SHAP/Grad-CAM XAI) has been individually demonstrated at state-of-the-art performance levels in the reviewed literature.
+[345] Integration gap: No reviewed system combines more than two of the five required capability dimensions simultaneously. The integration of all five in a deployment-ready system is the novel contribution of this research.
+[346] Base paper: AgriDoctor (IEEE, 2025) is identified as the primary base paper — it establishes the intent-routing multi-agent paradigm that the proposed system extends across five domains with sensor fusion, RAG, XAI, voice, and market integration.
+[347] Technology readiness: The convergence of ViT LoRA fine-tuning, Whisper large-v3, Bhashini API, hybrid RAG, and LangGraph in 2023-2025 makes the proposed system both necessary and technically feasible at this time.
+[348] Figure 2.4: Chapter 2 summary — what the literature establishes and the specific integration gap addressed by this research.
+[349] 
+[350] References
+[351] The following references are cited in Chapter 2. Complete bibliographic details are consolidated in the thesis reference list.
+[352] 
+[353] [1]  Farmer.Chat: Scaling AI-Powered Agricultural Services for Smallholder Farmers. ACM, 2024. arXiv:2409.08916.
+[354] [2]  AgriDoctor: A Modular Multimodal Framework for Crop Disease Diagnosis and Agricultural Knowledge Interaction. IEEE / arXiv:2509.17044, September 2025.
+[355] [3]  AgriGPT: A Large Language Model Ecosystem for Agriculture with Tri-RAG and Multi-Agent Data Engine. arXiv:2508.08632, August 2025.
+[356] [4]  AgriGPT-VL: Agricultural Vision-Language Understanding Suite with the Agri-3M-VL Dataset. arXiv:2510.04002, October 2025.
+[357] [5]  AgriM-LLM: An Agriculture-Specific Multimodal Large Language Model for Intelligent Crop Disease and Pest Management. Preprints.org, January 2026. DOI: 10.20944/preprints202601.0646.v1.
+[358] [6]  AgroAskAI: A Multi-Agentic Framework for Agricultural Advisory and Climate Adaptation. arXiv, December 2024.
+[359] [7]  Agentic AI-Driven Autonomous Decision Support System for Smart Agriculture (CropiBot). Scientific Reports, January 2026.
+[360] [8]  MIRAGE: A Benchmark for Multimodal Information-Seeking and Reasoning in Agricultural Expert-Guided Conversations. arXiv, 2025.
+[361] [9]  AgMMU: Agricultural Multimodal Understanding and Reasoning Benchmark. arXiv, April 2025.
+[362] [10]  LLMI-CDP: A Large Language Model for Multimodal Identification of Crop Diseases and Pests. Scientific Reports (Nature), 2025. DOI: 10.1038/s41598-025-01908-0.
+[363] [11]  AgriChain: Visually-Grounded Expert-Verified Reasoning for Agricultural Vision-Language Models. arXiv, 2025.
+[364] [12]  Self-Consistency in Vision-Language Models for Precision Agriculture: Multi-Response Consensus for Crop Disease Management. arXiv, 2025.
+[365] [13]  Cross-Modal Data Fusion via Vision-Language Model for Crop Disease Recognition under Complex Field Conditions. PMC / MDPI, 2025.
+[366] [14]  RAG-Based Large Language Model Advisory Framework for Farmers. Journal of Agricultural Engineering, 2026.
+[367] [15]  AgroLLM: Connecting Farmers and Agricultural Practices through Large Language Models with Domain Knowledge Processing. arXiv:2503.04788, 2025.
+[368] [16]  Overcoming LLM Challenges using RAG-Driven Precision in Coffee Leaf Disease Remediation. IEEE Conference, 2024.
+[369] [17]  Enhancing Crop Recommendation with Explainable Artificial Intelligence (XAI-CROP). Neural Computing and Applications, Springer, 2024. DOI: 10.1007/s00521-024-xxxxx.
+[370] [18]  Agentic XAI Framework for Agricultural Recommendation Using SHAP-Based LLM Iterative Refinement. arXiv, 2025.
+[371] [19]  Selvaraju, R.R. et al. Grad-CAM: Visual Explanations from Deep Networks via Gradient-Based Localization. ICCV, 2017. DOI: 10.1109/ICCV.2017.74.
+[372] [20]  Lundberg, S.M. and Lee, S.I. A Unified Approach to Interpreting Model Predictions (SHAP). NeurIPS, 2017. arXiv:1705.07874.
+[373] [21]  Benchmarking Automatic Speech Recognition for Indian Languages in Agricultural Contexts. arXiv, 2025.
+[374] [22]  MeitY / Bhashini. Digital Language Inclusion Platform for India. Ministry of Electronics and Information Technology, Government of India, 2024. Available at: bhashini.gov.in.
+[375] [23]  Leveraging Synthetic Data for Agricultural QA with Multilingual LLMs. arXiv, 2025.
+[376] [24]  Kakwani, D. et al. IndicNLPSuite: Monolingual Corpora, Evaluation Benchmarks and Pre-trained Multilingual Language Models for Indian Languages. EMNLP Findings, 2020.
+[377] [25]  Radford, A. et al. Robust Speech Recognition via Large-Scale Weak Supervision (Whisper). ICML, 2023. arXiv:2212.04356.
+[378] [26]  Recent Advances in Transformer Technology for Agriculture: A Survey. Engineering Applications of AI, Elsevier, 2024.
+[379] [27]  Harnessing Large Vision and Language Models in Agriculture: A Review. Frontiers in Plant Science, 2025.
+[380] [28]  Deep Learning and Computer Vision Approaches in Plant Disease Detection: A Comprehensive Review. Artificial Intelligence Review, Springer, 2025.
+[381] [29]  Hughes, D. and Salathé, M. An Open Access Repository of Images on Plant Health to Enable the Development of Mobile Disease Diagnostics (PlantVillage). arXiv:1511.08060, 2015.
+[382] [30]  Singh, D. et al. PlantDoc: A Dataset for Visual Plant Disease Detection. CoDS-COMAD, 2020. DOI: 10.1145/3371158.3371196.
+[383] [31]  Wu, X. et al. IP102: A Large-Scale Benchmark Dataset for Insect Pest Recognition. CVPR, 2019.
+[384] [32]  PhenoAssistant: AI-Driven Plant Phenotyping via Natural Language Interaction. Nature Communications, 2026.
+[385] [33]  AgriBuddy: An Agentic Chatbot for Bangladeshi Smallholder Farmers with CNN Disease Detection. BRAC University, 2025.
+[386] [34]  IPM-AgriGPT: A Large Language Model for Pest and Disease Management Based on Integrated Pest Management. Mathematics (MDPI), 2025. DOI: 10.3390/math13040566.
+[387] [35]  Lewis, P. et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS, 2020. arXiv:2005.11401.
+[388] [36]  Hu, E. et al. LoRA: Low-Rank Adaptation of Large Language Models. ICLR, 2022. arXiv:2106.09685.
+[389] [37]  Dosovitskiy, A. et al. An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale. ICLR, 2021. arXiv:2010.11929.
+[390] [38]  PLANT/ds Rule-Based Disease Expert System for Soybean. Purdue University Agricultural Experiment Station, 1983.
+[391] [39]  RAGAS: Automated Evaluation of Retrieval-Augmented Generation. arXiv:2309.15217, 2023.

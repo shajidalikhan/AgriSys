@@ -1,0 +1,139 @@
+# ==============================================================================
+# AgriSys .gitignore
+# Configured to ignore dependencies, build artifacts, environments, and caches
+# while preserving all project documentation, reports, presentations, and code.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment Variables & Secrets
+# ------------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+
+# Keep example configuration files
+!.env.example
+
+# ------------------------------------------------------------------------------
+# 2. Python & Testing Caches
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+
+# ------------------------------------------------------------------------------
+# 3. Node / Frontend Dependencies & Bundles (any directory)
+# ------------------------------------------------------------------------------
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+.vite/
+
+# ------------------------------------------------------------------------------
+# 4. LaTeX Build Artifacts (Keep source .tex, .bib, .pdf, .docx, images)
+# ------------------------------------------------------------------------------
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.synctex(busy)
+*.toc
+*.vrb
+*.lof
+*.lot
+*.run.xml
+*.bcf
+*.ist
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+
+# Temporary image outputs from pdftoppm checks
+*check*.png
+*zoom*.png
+*_temp.png
+test_*.png
+
+# ------------------------------------------------------------------------------
+# 5. Scratch & Development Work
+# ------------------------------------------------------------------------------
+scratch/
+
+# ------------------------------------------------------------------------------
+# 6. Operating System & IDE Files
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
